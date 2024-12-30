@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.models.players;
 
+import br.ufrn.imd.cambio_imd.exceptions.EmptyCardException;
 import br.ufrn.imd.cambio_imd.models.Entity;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 
@@ -57,5 +58,11 @@ public class Player extends Entity {
      */
     public Card drawCard(int index) {
         return cardHand.drawCard(index);
+    }
+
+    public void receiveCard(Card card) throws EmptyCardException {
+        if (card == null) throw new EmptyCardException();
+
+        cardHand.addCard(card);
     }
 }

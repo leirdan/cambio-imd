@@ -16,6 +16,7 @@ public class DrawPile extends Deck implements IDrawable {
         Collections.shuffle(this.cards);
     }
 
+    /// @implSpec
     @Override
     public Card drawCard(int cardIndex) {
         return cards.remove(cardIndex);

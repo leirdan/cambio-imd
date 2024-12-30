@@ -1,28 +1,29 @@
 package br.ufrn.imd.cambio_imd.models.players;
 
 import br.ufrn.imd.cambio_imd.models.Entity;
+import br.ufrn.imd.cambio_imd.models.cards.Card;
 
 public class Player extends Entity {
     private String name = "";
     private boolean wrongCut = false;
-    private Hand hand = new Hand();
+    private CardHand cardHand = new CardHand();
 
     public Player() {
         super();
     }
 
-    public Player(String name, boolean wrongCut, Hand hand) {
+    public Player(String name, boolean wrongCut, CardHand cardHand) {
         super();
         this.name = name;
         this.wrongCut = wrongCut;
-        this.hand = hand;
+        this.cardHand = cardHand;
     }
 
-    public Player(int id, String name, boolean wrongCut, Hand hand) {
+    public Player(int id, String name, boolean wrongCut, CardHand cardHand) {
         super(id);
         this.name = name;
         this.wrongCut = wrongCut;
-        this.hand = hand;
+        this.cardHand = cardHand;
     }
 
     public String getName() {
@@ -41,11 +42,20 @@ public class Player extends Entity {
         this.wrongCut = wrongCut;
     }
 
-    public Hand getHand() {
-        return hand;
+    public CardHand getHand() {
+        return cardHand;
     }
 
-    public void setHand(Hand hand) {
-        this.hand = hand;
+    public void setHand(CardHand cardHand) {
+        this.cardHand = cardHand;
+    }
+
+    /**
+     * Encapsula o metodo <code>drawCard()</code> de <code>cardHand</code>.
+     * @param index Índice da carta.
+     * @return Carta selecionada.
+     */
+    public Card drawCard(int index) {
+        return cardHand.drawCard(index);
     }
 }

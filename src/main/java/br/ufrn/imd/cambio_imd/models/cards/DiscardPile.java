@@ -1,7 +1,7 @@
 package br.ufrn.imd.cambio_imd.models.cards;
 
 /**
- * Classe que representa a pilha de descartes do jogo
+ * Classe que representa a pilha de cartas descartadas
  */
 public class DiscardPile extends Deck {
     /**

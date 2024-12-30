@@ -7,7 +7,7 @@ import br.ufrn.imd.cambio_imd.models.cards.Deck;
 /**
  * Classe que representa a mão de cartas do jogador.
  */
-public class Hand extends Deck implements IDrawable {
+public class CardHand extends Deck implements IDrawable {
     /**
      * @return
      */
@@ -26,6 +26,7 @@ public class Hand extends Deck implements IDrawable {
         return cards.size();
     }
 
+    /// @implSpec
     @Override
     public Card drawCard(int cardIndex) {
         return cards.remove(cardIndex);

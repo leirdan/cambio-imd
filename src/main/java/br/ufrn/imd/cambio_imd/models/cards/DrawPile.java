@@ -3,6 +3,7 @@ package br.ufrn.imd.cambio_imd.models.cards;
 import br.ufrn.imd.cambio_imd.models.IDrawable;
 
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Classe que representa a pilha de reposição de cartas
@@ -14,6 +15,13 @@ public class DrawPile extends Deck implements IDrawable {
      */
     public void shuffle() {
         Collections.shuffle(this.cards);
+    }
+
+    public Card removeTopCard() {
+        if (!this.isEmpty())
+            return cards.pop();
+
+        return null;
     }
 
     /// @implSpec

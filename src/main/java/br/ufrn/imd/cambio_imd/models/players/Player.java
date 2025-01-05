@@ -51,18 +51,11 @@ public class Player extends Entity {
         this.cardHand = cardHand;
     }
 
-    /**
-     * Encapsula o metodo <code>drawCard()</code> de <code>cardHand</code>.
-     * @param index Índice da carta.
-     * @return Carta selecionada.
-     */
-    public Card drawCard(int index) {
-        return cardHand.drawCard(index);
+    public void addCard(Card card) {
+        cardHand.addCard(card);
     }
 
-    public void receiveCard(Card card) throws EmptyCardException {
-        if (card == null) throw new EmptyCardException();
-
-        cardHand.addCard(card);
+    public Card removeCard(int index) {
+        return cardHand.removeCard(index);
     }
 }

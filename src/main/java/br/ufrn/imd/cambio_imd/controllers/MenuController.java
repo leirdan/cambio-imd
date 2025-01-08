@@ -9,12 +9,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 /**
- *
+ * Controlador do menu de início e de escolha do modo de jogo.
  */
-public class MenuController {
-    private GameManager gameManager = GameManager.getInstance();
-    private ScreenManager screenManager = ScreenManager.getInstance();
-
+public class MenuController extends ControllerBase {
     @FXML
     private Button startBtn;
 
@@ -31,19 +28,19 @@ public class MenuController {
     private Button twelveCardsBtn;
 
     @FXML
-    void handleStartGame() {
+    void handleStartBtnClick() {
         screenManager.change(Screen.GAME_MODE);
     }
 
     @FXML
-    void handleGameModeSelect(ActionEvent event) {
+    void handleGameModeBtnClick(ActionEvent event) {
         screenManager.change(Screen.GAME);
         gameManager.setupGameMode(event);
         gameManager.start();
     }
 
     @FXML
-    void handleExitGame() {
+    void handleExitBtnClick() {
         Platform.exit();
     }
 }

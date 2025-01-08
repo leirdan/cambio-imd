@@ -1,18 +1,14 @@
 package br.ufrn.imd.cambio_imd.controllers;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
-import br.ufrn.imd.cambio_imd.managers.GameManager;
-import br.ufrn.imd.cambio_imd.managers.GameUIManager;
-import br.ufrn.imd.cambio_imd.models.players.Player;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
-public class GameController {
-    private GameManager gameManager = GameManager.getInstance();
-    private GameUIManager uiManager = GameUIManager.getInstance();
-
+/**
+ * Controlador que gerencia a principal view do jogo.
+ */
+public class GameController extends ControllerBase {
     @FXML
     private Label playerTurnLabel;
 

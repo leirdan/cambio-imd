@@ -1,13 +1,11 @@
 package br.ufrn.imd.cambio_imd.models.players;
 
-import br.ufrn.imd.cambio_imd.models.IDrawable;
-import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.Deck;
 
 /**
  * Classe que representa a mão de cartas do jogador.
  */
-public class CardHand extends Deck implements IDrawable {
+public class CardHand extends Deck {
     /**
      * @return
      */
@@ -19,16 +17,4 @@ public class CardHand extends Deck implements IDrawable {
         return points;
     }
 
-    /**
-     * Recupera a quantidade de cartas na mão
-     */
-    public int getAmount() {
-        return cards.size();
-    }
-
-    /// @implSpec
-    @Override
-    public Card drawCard(int cardIndex) {
-        return cards.remove(cardIndex);
-    }
 }

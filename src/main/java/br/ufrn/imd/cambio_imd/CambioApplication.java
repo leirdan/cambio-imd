@@ -1,5 +1,7 @@
 package br.ufrn.imd.cambio_imd;
 
+import br.ufrn.imd.cambio_imd.enums.Screen;
+import br.ufrn.imd.cambio_imd.managers.ScreenManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,10 +12,17 @@ import java.io.IOException;
 public class CambioApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(CambioApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
+        ScreenManager screenManager = ScreenManager.getInstance();
+        screenManager.init(stage);
+
+        for (var screen : Screen.values()){
+            screenManager.add(screen);
+        }
+
+        screenManager.change(Screen.MENU);
+
+        stage.setTitle("Cambio");
+        stage.setResizable(false);
         stage.show();
     }
 

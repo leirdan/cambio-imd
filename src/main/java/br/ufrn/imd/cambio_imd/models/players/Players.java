@@ -4,30 +4,30 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 
 public class Players {
-    private LinkedHashSet<Player> players = new LinkedHashSet<>();
+    private LinkedHashSet<Player> data = new LinkedHashSet<>();
 
-    public LinkedHashSet<Player> getPlayers() {
-        return players;
+    public LinkedHashSet<Player> getData() {
+        return data;
     }
 
-    public void setPlayers(LinkedHashSet<Player> players) {
-        this.players = players;
+    public void setData(LinkedHashSet<Player> data) {
+        this.data = data;
     }
 
     public void addPlayer(Player player) {
         if (player == null) return;
 
-        players.add(player);
+        data.add(player);
     }
 
     public void removePlayer(Player player) {
         if (player == null) return;
 
-        players.remove(player);
+        data.remove(player);
     }
 
     public Optional<Player> findById(int id) {
-        return players
+        return data
                 .stream()
                 .filter(player -> player.getId() == id)
                 .findFirst();

@@ -5,6 +5,7 @@ module br.ufrn.imd.cambio_imd {
     requires org.controlsfx.controls;
     requires org.kordamp.ikonli.javafx;
     requires java.management;
+    requires java.desktop;
 
     opens br.ufrn.imd.cambio_imd to javafx.fxml;
     opens br.ufrn.imd.cambio_imd.controllers to javafx.fxml;

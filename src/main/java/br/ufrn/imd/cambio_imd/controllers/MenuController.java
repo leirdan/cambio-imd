@@ -1,11 +1,8 @@
 package br.ufrn.imd.cambio_imd.controllers;
 
-import br.ufrn.imd.cambio_imd.commands.ChangeScreenCommand;
-import br.ufrn.imd.cambio_imd.commands.ICommand;
-import br.ufrn.imd.cambio_imd.commands.SetGameModeCommand;
-import br.ufrn.imd.cambio_imd.commands.StartGameCommand;
 import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.managers.GameManager;
+import br.ufrn.imd.cambio_imd.managers.ScreenManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +12,9 @@ import javafx.scene.control.Button;
  *
  */
 public class MenuController {
+    private GameManager gameManager = GameManager.getInstance();
+    private ScreenManager screenManager = ScreenManager.getInstance();
+
     @FXML
     private Button startBtn;
 
@@ -32,24 +32,14 @@ public class MenuController {
 
     @FXML
     void handleStartGame() {
-        ICommand com = new ChangeScreenCommand(Screen.GAME_MODE);
-        com.execute();
+        screenManager.change(Screen.GAME_MODE);
     }
 
     @FXML
     void handleGameModeSelect(ActionEvent event) {
-        // A ideia de criar commands é separar melhor as partes:
-        // O Controller não precisa saber que existe um Screen ou GameManager,
-        // ou seja, a parte da UI fica "isolada" da parte lógica.
-
-        // TODO: criar uma classe gerenciadora?
-        ICommand setCom = new SetGameModeCommand(event);
-        setCom.execute();
-
-        ICommand changeCom = new ChangeScreenCommand(Screen.GAME);
-        changeCom.execute();
-
-        new StartGameCommand().execute();
+        screenManager.change(Screen.GAME);
+        gameManager.setupGameMode(event);
+        gameManager.start();
     }
 
     @FXML

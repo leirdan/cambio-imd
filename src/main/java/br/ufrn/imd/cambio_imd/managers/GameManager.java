@@ -1,45 +1,15 @@
 package br.ufrn.imd.cambio_imd.managers;
 
-import br.ufrn.imd.cambio_imd.commands.GeneratePlayersOrderCommand;
-import br.ufrn.imd.cambio_imd.commands.ICommand;
+import br.ufrn.imd.cambio_imd.commands.*;
+import br.ufrn.imd.cambio_imd.controllers.GameController;
+import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
-import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
-import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
-import br.ufrn.imd.cambio_imd.models.players.Player;
-import br.ufrn.imd.cambio_imd.models.players.Players;
-import br.ufrn.imd.cambio_imd.utility.DeckGenerator;
-
-import java.util.LinkedHashSet;
+import javafx.event.ActionEvent;
 
 public class GameManager {
-    /**
-     *
-     */
-    private Players players = new Players();
-
-    private int currentPlayerIndex = 0;
-
-    /**
-     *
-     */
-    private DrawPile drawPile = new DrawPile();
-
-    /**
-     *
-     */
-    private DiscardPile discardPile = new DiscardPile();
-
-    /**
-     * talvez melhorar esses nomes
-     */
-    private int cardsPerHandLimit = 0; //< Quantas cartas a mão de cada jogador terá
-    private int revealedCardsLimit = 0; //< Quantas cartas os jogadores poderão ver inicialmente
-
-    /*
-     */
-    private Player winner = null;
-
-    private static GameManager instance = null;
+    private GameContext context = GameContext.getInstance();
+    private static GameManager instance;
 
     private GameManager() {
     }
@@ -51,73 +21,24 @@ public class GameManager {
         return instance;
     }
 
-    public Player getCurrentPlayer() {
-        if (players.getPlayers() == null || players.getPlayers().isEmpty())
-            throw new UnitializedGameException("Players were not set!");
-
-        int size = players.getPlayers().size();
-        if (currentPlayerIndex >= size)
-            currentPlayerIndex = 0;
-
-        var playersArray = players.getPlayers().toArray(new Player[0]);
-        return playersArray[currentPlayerIndex];
-    }
-
-    public void init() {
-        // FIXME: Por enquanto só 2 jogadores, depois mudar pra 4
-
-        // Cria baralho
-        dealCards();
-
-        // Cria jogadores
-        var players = new LinkedHashSet<Player>();
-        players.add(new Player("Jogador"));
-        players.add(new Player("Bot 1"));
-
-        // Distribui cartas
-        for (var p : players) {
-            for (int i = 0; i < cardsPerHandLimit; i++) {
-                p.addCard(this.drawPile.removeCard(i));
-            }
-            this.players.addPlayer(p);
+    public void start() throws UnitializedGameException {
+        if (context.getCardsPerHandLimit() == 0) {
+            throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
+                    "Certifique-se de chamar todos os métodos de setup antes deste.");
         }
 
-        // Sorteia ordem
-        ICommand orderCom = new GeneratePlayersOrderCommand(this.players.getPlayers());
-        orderCom.execute();
+        new DealCardsCommand().execute();
+        new CreatePlayersCommand().execute();
+        new GiveCardsToPlayersCommand().execute();
+        new GeneratePlayersOrderCommand().execute();
+
+        // Isso aqui é necessário pra trocar do menu para o jogo de fato de forma adequada, com todos os dados configurados.
+        var sm = ScreenManager.getInstance();
+        GameController controller = sm.getLoader(Screen.GAME).getController();
+        controller.render();
     }
 
-    private void dealCards() {
-        this.drawPile.setCards(DeckGenerator.generate());
-        this.drawPile.shuffle();
-    }
-
-
-    public void setPlayers(Players players) {
-        this.players = players;
-    }
-
-    public void setDrawPile(DrawPile drawPile) {
-        this.drawPile = drawPile;
-    }
-
-    public int getDrawPileCount() {
-        return this.drawPile.getAmount();
-    }
-
-    public void setDiscardPile(DiscardPile discardPile) {
-        this.discardPile = discardPile;
-    }
-
-    public void setCardsPerHandLimit(int cardsPerHandLimit) {
-        this.cardsPerHandLimit = cardsPerHandLimit;
-    }
-
-    public void setRevealedCardsLimit(int revealedCardsLimit) {
-        this.revealedCardsLimit = revealedCardsLimit;
-    }
-
-    public void setWinner(Player winner) {
-        this.winner = winner;
+    public void setupGameMode(ActionEvent event) {
+        new SetGameModeCommand(event).execute();
     }
 }

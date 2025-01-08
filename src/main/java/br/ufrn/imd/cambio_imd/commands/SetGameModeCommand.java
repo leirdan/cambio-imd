@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.commands;
 
+import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.managers.GameManager;
 import br.ufrn.imd.cambio_imd.managers.GameUIManager;
 import javafx.event.ActionEvent;
@@ -15,7 +16,7 @@ public class SetGameModeCommand implements ICommand {
     @Override
     public void execute() {
         if (event.getSource() instanceof Button btn) {
-            GameManager gm = GameManager.getInstance();
+            GameContext gm = GameContext.getInstance();
             GameUIManager gim = GameUIManager.getInstance();
             switch (btn.getId()) {
                 case "sixCardsBtn":

@@ -13,6 +13,11 @@ public class Player extends Entity {
         super();
     }
 
+    public Player(String name) {
+        super();
+        this.name = name;
+    }
+
     public Player(String name, boolean wrongCut, CardHand cardHand) {
         super();
         this.name = name;

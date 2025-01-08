@@ -3,7 +3,9 @@ package br.ufrn.imd.cambio_imd.controllers;
 import br.ufrn.imd.cambio_imd.commands.ChangeScreenCommand;
 import br.ufrn.imd.cambio_imd.commands.ICommand;
 import br.ufrn.imd.cambio_imd.commands.SetGameModeCommand;
+import br.ufrn.imd.cambio_imd.commands.StartGameCommand;
 import br.ufrn.imd.cambio_imd.enums.Screen;
+import br.ufrn.imd.cambio_imd.managers.GameManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,11 +41,15 @@ public class MenuController {
         // A ideia de criar commands é separar melhor as partes:
         // O Controller não precisa saber que existe um Screen ou GameManager,
         // ou seja, a parte da UI fica "isolada" da parte lógica.
+
+        // TODO: criar uma classe gerenciadora?
         ICommand setCom = new SetGameModeCommand(event);
         setCom.execute();
 
         ICommand changeCom = new ChangeScreenCommand(Screen.GAME);
         changeCom.execute();
+
+        new StartGameCommand().execute();
     }
 
     @FXML

@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 
 public class Players {
-    private LinkedHashSet<Player> players;
+    private LinkedHashSet<Player> players = new LinkedHashSet<>();
 
     public LinkedHashSet<Player> getPlayers() {
         return players;

@@ -22,7 +22,9 @@ public class CambioApplication extends Application {
         screenManager.change(Screen.MENU);
 
         stage.setTitle("Cambio");
-        stage.setResizable(false);
+        stage.setWidth(960);
+        stage.setHeight(640);
+        stage.setResizable(true);
         stage.show();
     }
 

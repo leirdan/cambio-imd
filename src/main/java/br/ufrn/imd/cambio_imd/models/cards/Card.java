@@ -6,7 +6,11 @@ import java.util.Objects;
 
 public class Card {
     /**
-     * Par formado pelo símbolo da carta e seu real valor.
+     * Naipe da carta.
+     */
+    private String suit;
+    /**
+     * Par formado pelo número da carta e seu real valor.
      */
     private Pair<String, Integer> data;
 
@@ -14,25 +18,27 @@ public class Card {
      * Construtor padrão da classe <code>Card</code>
      * @param key Um símbolo aceitável do baralho de cartas.
      *            <p> Os símbolos são
-     *            <code> {A, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K }</code>
+     *            <code> {Ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King }</code>
      *            </p>
      */
-    public Card(String key) {
+    public Card(String suit, String key) {
+        this.suit = suit;
+
         int value = 0;
         switch (key) {
-            case "A":
+            case "Ace":
                 value = 1;
                 break;
             case "8":
                 value = 0;
                 break;
-            case "J":
+            case "Jack":
                 value = 11;
                 break;
-            case "Q":
+            case "Queen":
                 value = 12;
                 break;
-            case "K":
+            case "King":
                 value = 13;
                 break;
             default:
@@ -42,6 +48,8 @@ public class Card {
         this.data = new Pair<>(key, value);
     }
 
+    public String getSuit() { return this.suit;}
+    public String getKey() { return this.data.getKey();}
     public Integer getValue() {
         return this.data.getValue();
     }

@@ -32,22 +32,14 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
-<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="414.0" prefWidth="701.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="640.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
    <children>
-      <Pane layoutX="53.0" layoutY="32.0" prefHeight="173.0" prefWidth="448.0">
+      <Pane layoutX="53.0" layoutY="48.0" prefHeight="170.0" prefWidth="648.0">
          <children>
             <ImageView fitHeight="150.0" fitWidth="99.0" layoutX="175.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -56,23 +48,26 @@
             </ImageView>
          </children>
       </Pane>
-      <VBox alignment="CENTER" layoutX="531.0" layoutY="44.0" prefHeight="323.0" prefWidth="125.0">
+      <VBox alignment="CENTER" layoutX="531.0" layoutY="44.0" prefHeight="323.0" prefWidth="300.0">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="99.0" pickOnBounds="true" preserveRatio="true">
+            <Label fx:id="playerTurnLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="200.0" style="-fx-font-size: 16; -fx-font-weight: bold;" wrapText="true" />
+            <ImageView fx:id="drawPileTopCard" fitHeight="150.0" fitWidth="99.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/cards/clubKing.png" />
                </image>
             </ImageView>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="112.0" text="Pilha de reposição" />
+            <Label fx:id="drawPileCountLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="112.0" />
             <Pane prefHeight="83.0" prefWidth="125.0">
                <children>
-                  <Button fx:id="botaoVoltarMenu" layoutX="19.0" layoutY="16.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="87.0" text="Puxar" />
+                  <Button fx:id="botaoVoltarMenu" layoutX="19.0" layoutY="42.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="87.0" text="Puxar" />
                </children>
             </Pane>
          </children>
       </VBox>
-      <Line endX="65.0" endY="138.0" layoutX="453.0" layoutY="240.0" startX="65.0" startY="-208.0" stroke="#909090" />
+      <Line endX="65.0" endY="150.0" layoutX="453.0" layoutY="240.0" startX="65.0" startY="-216.0" stroke="#909090" />
       <Pane layoutX="45.0" layoutY="221.0" prefHeight="161.0" prefWidth="463.0">
+         <HBox fx:id="playerCardsHBox" layoutX="14.0" layoutY="17.0" spacing="5"> </HBox>
+         <!--
          <children>
             <GridPane hgap="5.0" layoutX="14.0" layoutY="17.0" prefHeight="128.0" prefWidth="141.0" vgap="12.0">
                <columnConstraints>
@@ -117,7 +112,8 @@
                   </ImageView>
                </children>
             </GridPane>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="156.0" layoutX="4.0" layoutY="2.0" smooth="false" stroke="BLACK" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" width="455.0" />
+            !-->
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="149.0" layoutX="3.0" layoutY="10.0" smooth="false" stroke="BLACK" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" width="457.0" />
             <Pane layoutX="161.0" layoutY="12.0" prefHeight="135.0" prefWidth="288.0">
                <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="26.0" layoutX="94.0" layoutY="5.0" stroke="BLACK" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" width="186.0" />
@@ -125,7 +121,7 @@
                   <Label layoutX="81.0" text="player_name" textFill="WHITE" />
                </children>
             </Pane>
-         </children>
+         <!--</children> !-->
       </Pane>
    </children>
 </AnchorPane>

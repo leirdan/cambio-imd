@@ -3,6 +3,10 @@ package br.ufrn.imd.cambio_imd.managers;
 import javafx.scene.control.Label;
 import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.models.players.Player;
+import javafx.scene.control.TextArea;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class GameUIManager {
     private double cardWidth;
@@ -45,5 +49,25 @@ public class GameUIManager {
 
         drawPileLabel.setText("Restam: " + context.getDrawPileCount());
     }
+
+    public String getPlayerLabelText() {
+        Player p = context.getCurrentPlayer();
+        if (p == null)
+            return "Turno não definido";
+        else
+            return "Turno de " + p.getName();
+    }
+
+    public String getDrawPileCountText() {
+        return "Restam " + context.getDrawPile().getCards().size() + " cartas.";
+    }
+
+    public String getFormattedInstant() {
+
+        LocalDateTime dt = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedTime = dt.format(formatter);
+    }
+
 
 }

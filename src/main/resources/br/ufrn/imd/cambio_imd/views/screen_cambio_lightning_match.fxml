@@ -32,19 +32,13 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="414.0" prefWidth="701.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="414.0" prefWidth="701.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
    <children>
       <Pane layoutX="128.0" layoutY="34.0" prefHeight="173.0" prefWidth="448.0">
          <children>
@@ -60,11 +54,10 @@
             </ImageView>
          </children>
       </Pane>
-      <VBox alignment="CENTER" layoutX="539.0" layoutY="44.0" prefHeight="208.0" prefWidth="117.0" />
       <Pane layoutX="19.0" layoutY="221.0" prefHeight="182.0" prefWidth="665.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="171.0" layoutX="8.0" layoutY="6.0" smooth="false" stroke="#aeaeae" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" width="651.0" />
-            <GridPane hgap="5.0" layoutX="16.0" layoutY="37.0" prefHeight="111.0" prefWidth="433.0" vgap="12.0">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="196.0" layoutX="7.0" layoutY="6.0" smooth="false" stroke="#aeaeae" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" width="651.0" />
+            <GridPane hgap="5.0" layoutX="14.0" layoutY="60.0" prefHeight="111.0" prefWidth="433.0" vgap="12.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -111,22 +104,28 @@
             </GridPane>
             <Pane layoutX="457.0" layoutY="13.0" prefHeight="158.0" prefWidth="193.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="156.0" stroke="BLACK" strokeDashOffset="2.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="0.0" width="193.0" />
-                  <Text fill="WHITE" fontSmoothingType="LCD" layoutX="73.0" layoutY="35.0" stroke="#eee0e0" strokeLineCap="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" text="Jogador" textAlignment="CENTER">
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1c1c1c8a" height="156.0" stroke="BLACK" strokeDashOffset="2.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="0.0" width="193.0" />
+                  <Text fill="WHITE" fontSmoothingType="LCD" layoutX="73.0" layoutY="19.0" stroke="#eee0e0" strokeLineCap="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" text="Jogador" textAlignment="CENTER">
                      <font>
                         <Font name="Droid Sans Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Text fill="WHITE" fontSmoothingType="LCD" layoutX="82.0" layoutY="98.0" stroke="#eee0e0" strokeLineCap="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" text="Ação" textAlignment="CENTER">
+                  <Text fill="WHITE" fontSmoothingType="LCD" layoutX="78.0" layoutY="76.0" stroke="#eee0e0" strokeLineCap="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" text="Ações" textAlignment="CENTER">
                      <font>
                         <Font name="Droid Sans Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="26.0" layoutX="13.0" layoutY="46.0" stroke="#979797" strokeType="INSIDE" width="167.0" />
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="26.0" layoutX="13.0" layoutY="109.0" stroke="#979797" strokeType="INSIDE" width="167.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="26.0" layoutX="13.0" layoutY="29.0" stroke="#979797" strokeType="INSIDE" width="167.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="14.0" layoutY="79.0" stroke="#979797" strokeType="INSIDE" width="167.0" />
                </children>
             </Pane>
          </children>
       </Pane>
+      <VBox alignment="CENTER" layoutX="539.0" layoutY="44.0" prefHeight="208.0" prefWidth="117.0" />
+      <VBox layoutX="24.0" layoutY="46.0" prefHeight="149.0" prefWidth="194.0">
+         <children>
+            <TextArea fx:id="messageBox" prefHeight="200.0" prefWidth="200.0" editable="false"/>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

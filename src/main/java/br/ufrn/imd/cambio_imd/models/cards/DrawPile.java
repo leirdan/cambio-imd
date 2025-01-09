@@ -1,7 +1,5 @@
 package br.ufrn.imd.cambio_imd.models.cards;
 
-import br.ufrn.imd.cambio_imd.models.IDrawable;
-
 import java.util.Collections;
 import java.util.Optional;
 

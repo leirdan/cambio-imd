@@ -6,6 +6,7 @@ import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import javafx.event.ActionEvent;
+import javafx.scene.control.TextArea;
 
 /**
  *
@@ -40,6 +41,7 @@ public class GameManager {
         GameController controller = sm.getLoader(Screen.GAME).getController();
         controller.render();
     }
+
 
     public void setupGameMode(ActionEvent event) {
         new SetGameModeCommand(event).execute();

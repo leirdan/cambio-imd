@@ -5,8 +5,12 @@ import br.ufrn.imd.cambio_imd.controllers.GameController;
 import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
+import br.ufrn.imd.cambio_imd.models.cards.Card;
+import br.ufrn.imd.cambio_imd.models.players.Player;
 import javafx.event.ActionEvent;
 import javafx.scene.control.TextArea;
+
+import java.util.Stack;
 
 /**
  *
@@ -23,6 +27,11 @@ public class GameManager {
             instance = new GameManager();
 
         return instance;
+    }
+
+    public Stack<Card> getCurrentPlayerCards() {
+        Player p = context.getCurrentPlayer();
+        return p.getHand().getCards();
     }
 
     public void start() throws UnitializedGameException {

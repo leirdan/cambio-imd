@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.managers;
 
+import br.ufrn.imd.cambio_imd.models.cards.Card;
 import javafx.scene.control.Label;
 import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -7,6 +8,7 @@ import javafx.scene.control.TextArea;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Stack;
 
 public class GameUIManager {
     private double cardWidth;
@@ -40,6 +42,7 @@ public class GameUIManager {
         return instance;
     }
 
+
     public void renderMain(Label playerLabel, Label drawPileLabel) {
         Player p = context.getCurrentPlayer();
         if (p == null)
@@ -63,11 +66,10 @@ public class GameUIManager {
     }
 
     public String getFormattedInstant() {
-
         LocalDateTime dt = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         String formattedTime = dt.format(formatter);
+        return formattedTime;
     }
-
 
 }

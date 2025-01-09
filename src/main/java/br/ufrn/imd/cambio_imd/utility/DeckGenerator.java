@@ -5,7 +5,11 @@ import br.ufrn.imd.cambio_imd.models.cards.Deck;
 
 import java.util.Stack;
 
+/**
+ *
+ */
 public class DeckGenerator {
+    private DeckGenerator() {}
     public static Stack<Card> generate() {
         Stack<Card> deck = new Stack<>();
         for (String suit : Deck.SUITS) {

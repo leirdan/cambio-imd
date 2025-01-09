@@ -1,14 +1,10 @@
 package br.ufrn.imd.cambio_imd.dao;
 
-import br.ufrn.imd.cambio_imd.commands.GeneratePlayersOrderCommand;
-import br.ufrn.imd.cambio_imd.commands.ICommand;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
 import br.ufrn.imd.cambio_imd.models.players.Players;
-
-import java.util.LinkedHashSet;
 
 public class GameContext {
 

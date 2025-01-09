@@ -6,7 +6,13 @@ import br.ufrn.imd.cambio_imd.models.cards.Deck;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 public class CardAssetMapper {
+    private CardAssetMapper() {
+    }
+
     private static final String BASE_PATH = "br/ufrn/imd/cambio_imd/views/assets/cards/";
     private static final Map<String, String> ASSET_MAP = initAssets();
 
@@ -15,7 +21,7 @@ public class CardAssetMapper {
 
         for (String suit : Deck.SUITS) {
             for (String rank : Deck.RANKS) {
-                String key = rank + " of " + suit;
+                String key = rank + " - " + suit;
                 String fileName = suit.toLowerCase() + rank + ".png";
                 map.put(key, BASE_PATH + fileName);
             }

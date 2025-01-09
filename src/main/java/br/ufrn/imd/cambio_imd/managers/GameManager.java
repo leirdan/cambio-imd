@@ -7,6 +7,9 @@ import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import javafx.event.ActionEvent;
 
+/**
+ *
+ */
 public class GameManager {
     private GameContext context = GameContext.getInstance();
     private static GameManager instance;

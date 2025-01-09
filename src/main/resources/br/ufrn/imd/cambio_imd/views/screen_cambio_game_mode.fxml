@@ -58,7 +58,7 @@
                         </Label>
                         <Pane prefHeight="38.0" prefWidth="148.0">
                            <children>
-                              <Button fx:id="sixCardsBtn" layoutX="31.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGameModeSelect" onMouseClicked="#handleGameModeSelect" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
+                              <Button fx:id="sixCardsBtn" layoutX="31.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
                            </children>
                         </Pane>
                      </children>
@@ -78,7 +78,7 @@
                         </Label>
                         <Pane prefHeight="40.0" prefWidth="148.0">
                            <children>
-                              <Button fx:id="eightCardsBtn" layoutX="31.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleGameModeSelect" onMouseClicked="#handleGameModeSelect" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
+                              <Button fx:id="eightCardsBtn" layoutX="31.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
                            </children>
                         </Pane>
                      </children>
@@ -98,7 +98,7 @@
                         </Label>
                         <Pane prefHeight="27.0" prefWidth="148.0">
                            <children>
-                              <Button fx:id="twelveCardsBtn" layoutX="31.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleGameModeSelect" onMouseClicked="#handleGameModeSelect" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
+                              <Button fx:id="twelveCardsBtn" layoutX="31.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
                            </children>
                         </Pane>
                      </children>

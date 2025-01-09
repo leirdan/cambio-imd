@@ -1,36 +1,26 @@
 package br.ufrn.imd.cambio_imd.managers;
 
-import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
-import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
+import br.ufrn.imd.cambio_imd.commands.*;
+import br.ufrn.imd.cambio_imd.controllers.GameController;
+import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.enums.Screen;
+import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
+import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.players.Player;
-import br.ufrn.imd.cambio_imd.models.players.Players;
+import javafx.event.ActionEvent;
+import javafx.scene.control.TextArea;
 
+import java.util.Stack;
+
+/**
+ *
+ */
 public class GameManager {
-    /**
-     */
-    private Players players;
+    private GameContext context = GameContext.getInstance();
+    private static GameManager instance;
 
-    /**
-     */
-    private DrawPile drawPile;
-
-    /**
-     */
-    private DiscardPile discardPile;
-
-    /**
-     * talvez melhorar esses nomes
-     */
-    private int cardsPerHandLimit = 0; //< Quantas cartas a mão de cada jogador terá
-    private int revealedCardsLimit = 0; //< Quantas cartas os jogadores poderão ver inicialmente
-
-    /*
-     */
-    private Player winner = null;
-
-    private static GameManager instance = null;
-
-    private GameManager() {}
+    private GameManager() {
+    }
 
     public static GameManager getInstance() {
         if (instance == null)
@@ -39,27 +29,30 @@ public class GameManager {
         return instance;
     }
 
-    public void setPlayers(Players players) {
-        this.players = players;
+    public Stack<Card> getCurrentPlayerCards() {
+        Player p = context.getCurrentPlayer();
+        return p.getHand().getCards();
     }
 
-    public void setDrawPile(DrawPile drawPile) {
-        this.drawPile = drawPile;
+    public void start() throws UnitializedGameException {
+        if (context.getCardsPerHandLimit() == 0) {
+            throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
+                    "Certifique-se de chamar todos os métodos de setup antes deste.");
+        }
+
+        new DealCardsCommand().execute();
+        new CreatePlayersCommand().execute();
+        new GiveCardsToPlayersCommand().execute();
+        new GeneratePlayersOrderCommand().execute();
+
+        // Isso aqui é necessário pra trocar do menu para o jogo de fato de forma adequada, com todos os dados configurados.
+        var sm = ScreenManager.getInstance();
+        GameController controller = sm.getLoader(Screen.GAME).getController();
+        controller.render();
     }
 
-    public void setDiscardPile(DiscardPile discardPile) {
-        this.discardPile = discardPile;
-    }
 
-    public void setCardsPerHandLimit(int cardsPerHandLimit) {
-        this.cardsPerHandLimit = cardsPerHandLimit;
-    }
-
-    public void setRevealedCardsLimit(int revealedCardsLimit) {
-        this.revealedCardsLimit = revealedCardsLimit;
-    }
-
-    public void setWinner(Player winner) {
-        this.winner = winner;
+    public void setupGameMode(ActionEvent event) {
+        new SetGameModeCommand(event).execute();
     }
 }

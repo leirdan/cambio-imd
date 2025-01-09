@@ -5,6 +5,7 @@ import br.ufrn.imd.cambio_imd.enums.Screen;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public class ScreenManager {
     private Stage primaryScreen;
-    private Map<Screen, Scene> screens;
+    private Map<Screen, Pair<Scene, FXMLLoader>> screens;
     private static ScreenManager instance;
 
     private ScreenManager() {
@@ -30,17 +31,21 @@ public class ScreenManager {
         this.primaryScreen = stage;
     }
 
+    public FXMLLoader getLoader(Screen screen) {
+        return screens.get(screen).getValue();
+    }
+
     public void add(Screen screen) throws IOException {
         var loader = new FXMLLoader(CambioApplication.class.getResource(screen.getUrl()));
         var newScene = new Scene(loader.load());
 
-        screens.put(screen, newScene);
+        screens.put(screen, new Pair<>(newScene, loader));
     }
 
     public void change(Screen screen) {
         var sceneToChange = screens.get(screen);
         if (sceneToChange != null)
-            primaryScreen.setScene(sceneToChange);
+            primaryScreen.setScene(sceneToChange.getKey());
     }
 
 }

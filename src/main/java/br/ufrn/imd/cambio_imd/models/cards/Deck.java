@@ -6,7 +6,10 @@ import br.ufrn.imd.cambio_imd.exceptions.EmptyDeckException;
 import java.util.Stack;
 
 public abstract class Deck {
-    protected Stack<Card> cards;
+    public static final String[] SUITS = {"Heart", "Diamond", "Club", "Spade"};
+    public static final String[] RANKS = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+
+    protected Stack<Card> cards = new Stack<>();
 
     public Stack<Card> getCards() {
         return cards;

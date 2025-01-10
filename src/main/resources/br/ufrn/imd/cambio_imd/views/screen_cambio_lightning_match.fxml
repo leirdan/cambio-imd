@@ -40,11 +40,11 @@
 
 <AnchorPane prefHeight="414.0" prefWidth="701.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
     <children>
-        <Pane layoutX="128.0" layoutY="34.0" prefHeight="173.0" prefWidth="448.0" fx:id="pilesPane">
+        <Pane fx:id="pilesPane" layoutX="128.0" layoutY="34.0" prefHeight="173.0" prefWidth="448.0">
             <children>
                 <ImageView fx:id="discardPileImage" fitHeight="150.0" fitWidth="99.0" layoutX="175.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true">
                 </ImageView>
-                <ImageView fx:id="drawPileImage" fitHeight="80.0" fitWidth="57.0" layoutX="302.0" layoutY="47.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="drawPileImage" fitHeight="80.0" fitWidth="57.0" layoutX="380.0" layoutY="47.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@assets/img/cards/redBack.png" />
                     </image>
@@ -67,26 +67,25 @@
                         <RowConstraints vgrow="ALWAYS" />
                     </rowConstraints>
                 </GridPane>
-                <Pane layoutX="457.0" layoutY="13.0" prefHeight="158.0" prefWidth="193.0">
+                <Pane layoutX="457.0" layoutY="13.0" prefHeight="200.0" prefWidth="193.0">
                     <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1c1c1c8a" height="156.0" stroke="BLACK" strokeDashOffset="2.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="0.0" width="193.0" />
-                        <Text fill="WHITE" fontSmoothingType="LCD" layoutX="73.0" layoutY="19.0" stroke="#eee0e0" strokeLineCap="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" text="Jogador" textAlignment="CENTER">
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1c1c1c8a" height="200.0" stroke="BLACK" strokeDashOffset="2.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="0.0" width="193.0" />
+                        <Label layoutX="10.0" layoutY="10.0" text="Jogador" textFill="WHITE">
                             <font>
                                 <Font name="Droid Sans Bold" size="13.0" />
                             </font>
-                        </Text>
-                        <Text fill="WHITE" fontSmoothingType="LCD" layoutX="78.0" layoutY="76.0" stroke="#eee0e0" strokeLineCap="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" text="Ações" textAlignment="CENTER">
+                        </Label>
+                        <TextField fx:id="playerTextField" layoutX="10.0" layoutY="30.0" prefWidth="173.0" />
+                        <Label layoutX="10.0" layoutY="70.0" text="Histórico" textFill="WHITE">
                             <font>
                                 <Font name="Droid Sans Bold" size="13.0" />
                             </font>
-                        </Text>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="26.0" layoutX="13.0" layoutY="29.0" stroke="#979797" strokeType="INSIDE" width="167.0" />
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="14.0" layoutY="79.0" stroke="#979797" strokeType="INSIDE" width="167.0" />
+                        </Label>
+                        <TextArea fx:id="historyTextArea" layoutX="10.0" layoutY="90.0" prefHeight="100.0" prefWidth="173.0" />
                     </children>
                 </Pane>
             </children>
         </Pane>
-        <VBox alignment="CENTER" layoutX="539.0" layoutY="44.0" prefHeight="208.0" prefWidth="117.0" />
         <VBox layoutX="24.0" layoutY="46.0" prefHeight="149.0" prefWidth="194.0">
             <children>
                 <TextArea fx:id="messageBox" editable="false" prefHeight="200.0" prefWidth="200.0" />

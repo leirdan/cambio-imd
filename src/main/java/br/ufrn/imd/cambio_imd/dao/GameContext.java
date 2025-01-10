@@ -1,6 +1,8 @@
 package br.ufrn.imd.cambio_imd.dao;
 
+import br.ufrn.imd.cambio_imd.exceptions.InvalidDataException;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
+import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -60,14 +62,18 @@ public class GameContext {
 
     public Player getCurrentPlayer() {
         if (players.getData() == null || players.getData().isEmpty())
-            throw new UnitializedGameException("Players were not set!");
+            throw new UnitializedGameException("Jogadores não foram inicializados corretamente!");
 
         int size = players.getData().size();
         if (currentPlayerIndex >= size)
             currentPlayerIndex = 0;
-
         var playersArray = players.getData().toArray(new Player[0]);
-        return playersArray[currentPlayerIndex];
+
+        var player = playersArray[currentPlayerIndex];
+        if (player == null)
+            throw new InvalidDataException("Jogador não foi encontrado nesse índice!");
+
+        return player;
     }
 
     public Player getCurrentPlayerToCut() {

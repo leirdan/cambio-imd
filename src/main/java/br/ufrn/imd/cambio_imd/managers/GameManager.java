@@ -1,11 +1,10 @@
 package br.ufrn.imd.cambio_imd.managers;
 
 import br.ufrn.imd.cambio_imd.commands.*;
-import br.ufrn.imd.cambio_imd.controllers.GameController;
 import br.ufrn.imd.cambio_imd.dao.GameContext;
-import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
+import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
@@ -48,6 +47,14 @@ public class GameManager {
         return p.getHand().getCards();
     }
 
+    public Card getTopCardOnDiscardPile() {
+        return context.getDiscardPile().getCardOnTop();
+    }
+
+    public String getCurrentPlayerName() {
+        return context.getCurrentPlayer().getName();
+    }
+
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
@@ -68,14 +75,23 @@ public class GameManager {
     }
 
     public void playCard(int cardIndex) {
-        var player = context.getCurrentPlayer();
-        var drawPile = context.getDrawPile();
-        var discardPile = context.getDiscardPile();
+        try {
+            var player = context.getCurrentPlayer();
+            var card = getCurrentPlayerCards().get(cardIndex).toString();
 
-        new PlayerDiscardCardOnPileCommand(player, discardPile, cardIndex).execute();
-        notifyCardDiscarded();
-        new PlayerDrawCardFromPileCommand(player, drawPile).execute();
-        notifyCardDrawn();
+            var drawPile = context.getDrawPile();
+            var discardPile = context.getDiscardPile();
+
+            new PlayerDiscardCardOnPileCommand(player, discardPile, cardIndex).execute();
+            notifyCardDiscarded();
+
+            new PlayerDrawCardFromPileCommand(player, drawPile).execute();
+            notifyCardDrawn();
+
+            notifyAction(player.getName() + " jogou carta " + card);
+        } catch (Exception ex) {
+            notifyAction("Erro na operação!");
+        }
     }
 
     /* Métodos que executam os observadores */
@@ -93,9 +109,14 @@ public class GameManager {
     }
 
     private void notifyStartGame() {
-        System.out.println("Entrou em notify");
         for (var observer : stateObservers) {
             observer.onStart();
+        }
+    }
+
+    private void notifyAction(String actionMessage) {
+        for (var observer : stateObservers) {
+            observer.onAction(actionMessage);
         }
     }
 }

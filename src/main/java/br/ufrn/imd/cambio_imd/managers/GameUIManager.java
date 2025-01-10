@@ -13,6 +13,7 @@ import java.util.Stack;
 public class GameUIManager {
     private double cardWidth;
     private double cardHeight;
+    private int clickedCard;
     private static GameUIManager instance;
     private GameContext context = GameContext.getInstance();
 
@@ -72,4 +73,11 @@ public class GameUIManager {
         return formattedTime;
     }
 
+    public int getClickedCard() {
+        return clickedCard;
+    }
+
+    public void setClickedCard(int clickedCard) {
+        this.clickedCard = clickedCard;
+    }
 }

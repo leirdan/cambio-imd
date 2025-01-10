@@ -2,18 +2,21 @@ package br.ufrn.imd.cambio_imd.controllers;
 
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
-import br.ufrn.imd.cambio_imd.models.players.Player;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Stack;
 
 /**
@@ -32,6 +35,22 @@ public class GameController extends ControllerBase {
     @FXML
     private TextArea messageBox;
 
+    private Button playBtn = new Button();
+    private Button swapBtn = new Button();
+    private HBox optionsBox;
+
+    @FXML
+    protected void initialize() {
+        playBtn.setText("Jogar");
+        playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
+        swapBtn.setText("Trocar");
+        swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
+        optionsBox = new HBox(5, playBtn, swapBtn); // Espaçamento de 5px
+        optionsBox.setAlignment(Pos.CENTER);
+        optionsBox.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 5px; -fx-border-radius: 5px;");
+        optionsBox.setTranslateY(-50);
+    }
+
 
     public void render() {
         try {
@@ -44,6 +63,34 @@ public class GameController extends ControllerBase {
         }
     }
 
+    @FXML
+    protected void handleCardClick(MouseEvent event) {
+        System.out.println("Clickou!!");
+        int cardIndex = uiManager.getClickedCard();
+
+        if (playerHandGridPane.getChildren().contains(optionsBox))
+            playerHandGridPane.getChildren().remove(optionsBox);
+
+        Node node = playerHandGridPane.getChildren().get(cardIndex);
+        int col = GridPane.getColumnIndex(node);
+        int row = GridPane.getRowIndex(node);
+        playerHandGridPane.add(optionsBox, col, row);
+
+        // Remove caixa ao clicar fora
+        playerHandGridPane.setOnMouseClicked(click -> {
+            if (click.getSource() != optionsBox){
+                playerHandGridPane.getChildren().remove(optionsBox);
+            }
+        });
+    }
+
+    protected void handlePlayBtnClick() {
+        System.out.println("Helloooo play");
+    }
+
+    protected void handleSwapBtnClick() {
+        System.out.println("Helloooo swaaaap");
+    }
 
     private void renderPlayerHand() {
         /**
@@ -68,6 +115,13 @@ public class GameController extends ControllerBase {
             cardImageView.setFitWidth(uiManager.getCardWidth());
             cardImageView.setPreserveRatio(true);
             cardImageView.setPickOnBounds(true);
+
+            int index = i; // Precisa disso para não dar erro no parametro abaixo
+            // Verificar porque somente a primeira carta que eu clico exibe a seleção de opções e as outras não..
+            cardImageView.setOnMouseClicked(mouseEvent -> {
+                uiManager.setClickedCard(index);
+                handleCardClick(mouseEvent);
+            });
 
             Image cardImg = CardAssetMapper.getBackCardAsset();
             cardImageView.setImage(cardImg);

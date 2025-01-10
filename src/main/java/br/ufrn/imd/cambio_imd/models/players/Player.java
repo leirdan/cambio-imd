@@ -7,15 +7,13 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 public class Player extends Entity {
     private String name = "";
     private boolean wrongCut = false;
+    private boolean prohibitedCut = false;
     private CardHand cardHand = new CardHand();
+
+    private int cardIndex = -1;
 
     public Player() {
         super();
-    }
-
-    public Player(String name) {
-        super();
-        this.name = name;
     }
 
     public Player(String name, boolean wrongCut, CardHand cardHand) {
@@ -44,10 +42,6 @@ public class Player extends Entity {
         return wrongCut;
     }
 
-    public void setWrongCut(boolean wrongCut) {
-        this.wrongCut = wrongCut;
-    }
-
     public CardHand getHand() {
         return cardHand;
     }
@@ -63,4 +57,29 @@ public class Player extends Entity {
     public Card removeCard(int index) {
         return cardHand.removeCard(index);
     }
+
+    public boolean isProhibitedCut() {
+        return prohibitedCut;
+    }
+
+    public void setProhibitedCut(boolean prohibitedCut) {
+        this.prohibitedCut = prohibitedCut;
+    }
+
+    public int getCardIndex() {
+        return cardIndex;
+    }
+
+    public void setCardIndex(int cardIndex) {
+        this.cardIndex = cardIndex;
+    }
+
+    public boolean isWrongCut() {
+        return wrongCut;
+    }
+
+    public void setWrongCut(boolean wrongCut) {
+        this.wrongCut = wrongCut;
+    }
+    
 }

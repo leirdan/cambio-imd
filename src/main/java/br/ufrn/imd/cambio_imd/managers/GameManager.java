@@ -33,14 +33,6 @@ public class GameManager {
         return instance;
     }
 
-    public void addAnimationObserver(IGameAnimationObserver observer) {
-        this.animationObservers.add(observer);
-    }
-
-    public void addStateObserver(IGameStateObserver observer) {
-        this.stateObservers.add(observer);
-    }
-
 
     public Stack<Card> getCurrentPlayerCards() {
         Player p = context.getCurrentPlayer();
@@ -89,9 +81,28 @@ public class GameManager {
             notifyCardDrawn();
 
             notifyAction(player.getName() + " jogou carta " + card);
+
+            // TODO: Achar um jeito melhor de conseguir manter controle sobre qual o jogador da vez para renderizar
+
+            // FIXME: isso aqui embaixo foi só um teste, não está funcionando
+            var currentIndex = context.getCurrentPlayerIndex();
+            // se o player da vez eh o ultimo volta pro primeiro, indice 0
+            context.setCurrentPlayerIndex(currentIndex == context.getPlayers().getData().size() - 1 ? 0 :
+                    currentIndex++);
+            notifyChangeTurn();
         } catch (Exception ex) {
             notifyAction("Erro na operação!");
         }
+    }
+
+    /* Métodos que cadastram observadores */
+
+    public void addAnimationObserver(IGameAnimationObserver observer) {
+        this.animationObservers.add(observer);
+    }
+
+    public void addStateObserver(IGameStateObserver observer) {
+        this.stateObservers.add(observer);
     }
 
     /* Métodos que executam os observadores */
@@ -117,6 +128,12 @@ public class GameManager {
     private void notifyAction(String actionMessage) {
         for (var observer : stateObservers) {
             observer.onAction(actionMessage);
+        }
+    }
+
+    private void notifyChangeTurn() {
+        for (var observer : stateObservers) {
+            observer.onTurnChange();
         }
     }
 }

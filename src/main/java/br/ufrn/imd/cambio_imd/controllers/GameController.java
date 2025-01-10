@@ -123,7 +123,6 @@ public class GameController extends ControllerBase {
         });
     }
 
-
     public void render() {
         try {
             renderHistory();
@@ -132,8 +131,6 @@ public class GameController extends ControllerBase {
             System.out.println(ex.getMessage());
         }
     }
-
-    // está renderizando a carta atual na mão, não a antiga
 
     protected void renderHistory() {
         historyTextArea.clear();

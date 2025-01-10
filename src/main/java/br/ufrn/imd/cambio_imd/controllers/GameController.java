@@ -3,6 +3,7 @@ package br.ufrn.imd.cambio_imd.controllers;
 import br.ufrn.imd.cambio_imd.enums.TransitionType;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
+import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -34,6 +36,15 @@ public class GameController extends ControllerBase {
     private GridPane playerHandGridPane;
 
     @FXML
+    private Pane pilesPane;
+
+    @FXML
+    private ImageView discardPileImage;
+
+    @FXML
+    private ImageView drawPileImage;
+
+    @FXML
     private TextArea messageBox;
 
     private final Button playBtn = new Button();
@@ -42,6 +53,20 @@ public class GameController extends ControllerBase {
 
     @FXML
     protected void initialize() {
+        // FIXME: documentar bem essa inicialização
+        // Registrando observadores por classes anônimas
+        gameManager.addObserver(new IGameAnimationObserver() {
+            @Override
+            public void onCardDrawn() {
+                animateCardDrawn();
+            }
+
+            @Override
+            public void onCardDiscarded() {
+                animateCardDiscarded();
+            }
+        });
+
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
         playBtn.setMinWidth(50);
@@ -51,16 +76,17 @@ public class GameController extends ControllerBase {
 
         optionsBox = new VBox(5, playBtn, swapBtn);
         optionsBox.setAlignment(Pos.CENTER);
+        // FIXME: talvez criar uma classe .css pra isso, ou não se só for utilizado aqui
         optionsBox.setStyle("""
-                -fx-background-color: rgba(50, 50, 50, 0.9);
-                -fx-border-color: white;
-                -fx-border-width: 1px;
-                -fx-border-radius: 5px;
-                -fx-background-radius: 5px;
-                -fx-padding: 10px;
-                -fx-margin-bottom: 10px;
-                -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 1);
-               """);
+                 -fx-background-color: rgba(50, 50, 50, 0.9);
+                 -fx-border-color: white;
+                 -fx-border-width: 1px;
+                 -fx-border-radius: 5px;
+                 -fx-background-radius: 5px;
+                 -fx-padding: 10px;
+                 -fx-margin-bottom: 10px;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 1);
+                """);
 
         // Registra ação de fechar a janela de opções caso clique fora
         playerHandGridPane.addEventFilter(MouseEvent.MOUSE_CLICKED, click -> {
@@ -106,6 +132,7 @@ public class GameController extends ControllerBase {
 
     protected void handlePlayBtnClick() {
         System.out.println("Helloooo play");
+        gameManager.playCard(uiManager.getClickedCard());
     }
 
     protected void handleSwapBtnClick() {
@@ -157,8 +184,47 @@ public class GameController extends ControllerBase {
         messageBox.appendText("[" + instant + "]: " + msg + "\n");
     }
 
+
+    // Métodos de animação
+    // TODO: será que isso é responsabilidade desta classe?
+
+    // FIXME: deixar este método mais claro
+    private void animateCardDiscarded() {
+        var cardNode = playerHandGridPane.getChildren().get(uiManager.getClickedCard());
+
+        applyTransition(cardNode, Duration.millis(500), TransitionType.FADE_OUT, () -> {
+            pilesPane.getChildren().remove(discardPileImage);
+            playerHandGridPane.getChildren().remove(cardNode);
+            renderPlayerHand();
+
+            Image cardImage = CardAssetMapper.getAsset(gameManager.getCurrentPlayerCards().get(uiManager.getClickedCard()));
+
+            ImageView discardImageView = new ImageView(cardImage);
+            discardImageView.setFitWidth(uiManager.getCardWidth());
+            discardImageView.setFitHeight(uiManager.getCardHeight());
+            discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
+            discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
+
+            applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
+
+            pilesPane.getChildren().add(discardImageView);
+        });
+
+    }
+
+    private void animateCardDrawn() {
+        var drawCardImage = drawPileImage;
+
+        applyTransition(drawPileImage, Duration.millis(500), TransitionType.FADE_OUT, () -> {
+            playerHandGridPane.getChildren().add(drawCardImage);
+            renderPlayerHand();
+            drawCardImage.setOpacity(1);
+        });
+    }
+
     /**
      * Aplica uma transição do tipo <code>FadeTransition</code> em um elemento.
+     *
      * @param element
      * @param time
      * @param type
@@ -169,6 +235,7 @@ public class GameController extends ControllerBase {
 
     /**
      * Aplica uma transição do tipo <code>FadeTransition</code> em um elemento.
+     *
      * @param element
      * @param time
      * @param type

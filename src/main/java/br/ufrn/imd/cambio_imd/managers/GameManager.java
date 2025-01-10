@@ -7,9 +7,11 @@ import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.players.Player;
+import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import javafx.event.ActionEvent;
-import javafx.scene.control.TextArea;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -18,6 +20,7 @@ import java.util.Stack;
 public class GameManager {
     private GameContext context = GameContext.getInstance();
     private static GameManager instance;
+    private Set<IGameAnimationObserver> observers = new HashSet<>();
 
     private GameManager() {
     }
@@ -27,6 +30,22 @@ public class GameManager {
             instance = new GameManager();
 
         return instance;
+    }
+
+    public void addObserver(IGameAnimationObserver observer) {
+        this.observers.add(observer);
+    }
+
+    private void notifyCardDrawn() {
+        for (var observer : observers) {
+            observer.onCardDrawn();
+        }
+    }
+
+    private void notifyCardDiscarded() {
+        for (var observer : observers) {
+            observer.onCardDiscarded();
+        }
     }
 
     public Stack<Card> getCurrentPlayerCards() {
@@ -54,5 +73,16 @@ public class GameManager {
 
     public void setupGameMode(ActionEvent event) {
         new SetGameModeCommand(event).execute();
+    }
+
+    public void playCard(int cardIndex) {
+        var player = context.getCurrentPlayer();
+        var drawPile = context.getDrawPile();
+        var discardPile = context.getDiscardPile();
+
+        new PlayerDiscardCardOnPileCommand(player, discardPile, cardIndex).execute();
+        notifyCardDiscarded();
+        new PlayerDrawCardFromPileCommand(player, drawPile).execute();
+        notifyCardDrawn();
     }
 }

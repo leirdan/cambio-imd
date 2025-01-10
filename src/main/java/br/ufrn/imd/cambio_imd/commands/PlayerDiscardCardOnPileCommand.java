@@ -10,10 +10,10 @@ public class PlayerDiscardCardOnPileCommand implements ICommand {
     private DiscardPile pile;
     private int cardIndex;
 
-    public PlayerDiscardCardOnPileCommand(Player player, DiscardPile pile) {
+    public PlayerDiscardCardOnPileCommand(Player player, DiscardPile pile, int cardIndex) {
         this.player = player;
         this.pile = pile;
-        this.cardIndex = player.getCardIndex();
+        this.cardIndex = cardIndex;// player.getCardIndex();
     }
 
     @Override

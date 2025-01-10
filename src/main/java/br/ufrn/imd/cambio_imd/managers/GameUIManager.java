@@ -1,6 +1,8 @@
 package br.ufrn.imd.cambio_imd.managers;
 
 import br.ufrn.imd.cambio_imd.models.cards.Card;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
 import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -14,6 +16,7 @@ public class GameUIManager {
     private double cardWidth;
     private double cardHeight;
     private int clickedCard;
+    private Point2D discardPaneCoords = new Point2D(175, 12);
     private static GameUIManager instance;
     private GameContext context = GameContext.getInstance();
 
@@ -22,6 +25,14 @@ public class GameUIManager {
 
     public double getCardWidth() {
         return cardWidth;
+    }
+
+    public Point2D getDiscardPaneCoords() {
+        return discardPaneCoords;
+    }
+
+    public void setDiscardPaneCoords(double x, double y) {
+        discardPaneCoords = new Point2D(x, y);
     }
 
     public void setCardWidth(double cardWidth) {

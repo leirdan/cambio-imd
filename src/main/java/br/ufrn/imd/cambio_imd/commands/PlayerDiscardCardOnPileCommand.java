@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.commands;
 
+import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -12,15 +13,17 @@ public class PlayerDiscardCardOnPileCommand implements ICommand {
     public PlayerDiscardCardOnPileCommand(Player player, DiscardPile pile, int cardIndex) {
         this.player = player;
         this.pile = pile;
-        this.cardIndex = cardIndex;
+        this.cardIndex = cardIndex;// player.getCardIndex();
     }
 
     @Override
     public void execute(){
        // Pegar carta selecionada
         Card selectedCard = player.removeCard(cardIndex);
-
         // Inserir na pilha de descarte
         pile.addCard(selectedCard);
+        
+        GameContext context = GameContext.getInstance();
+        context.setLastPlayerToPlayId(player.getId());
     }
 }

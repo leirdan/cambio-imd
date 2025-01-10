@@ -4,6 +4,7 @@ import br.ufrn.imd.cambio_imd.enums.TransitionType;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
+import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
@@ -55,7 +56,7 @@ public class GameController extends ControllerBase {
     protected void initialize() {
         // FIXME: documentar bem essa inicialização
         // Registrando observadores por classes anônimas
-        gameManager.addObserver(new IGameAnimationObserver() {
+        gameManager.addAnimationObserver(new IGameAnimationObserver() {
             @Override
             public void onCardDrawn() {
                 animateCardDrawn();
@@ -66,6 +67,17 @@ public class GameController extends ControllerBase {
                 animateCardDiscarded();
             }
         });
+
+        /*
+        gameManager.addStateObserver(() -> new IGameStateObserver() {
+            @Override
+            public void onStart() {
+                System.out.println("Mudou pra jogo");
+                render();
+            }
+        });
+        */
+        gameManager.addStateObserver(this::render);
 
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());

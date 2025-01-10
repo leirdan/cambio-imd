@@ -3,6 +3,7 @@ package br.ufrn.imd.cambio_imd.controllers;
 import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.managers.GameManager;
 import br.ufrn.imd.cambio_imd.managers.ScreenManager;
+import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

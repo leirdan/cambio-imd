@@ -8,6 +8,7 @@ import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.players.Player;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
+import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import javafx.event.ActionEvent;
 
 import java.util.HashSet;
@@ -20,7 +21,8 @@ import java.util.Stack;
 public class GameManager {
     private GameContext context = GameContext.getInstance();
     private static GameManager instance;
-    private Set<IGameAnimationObserver> observers = new HashSet<>();
+    private Set<IGameAnimationObserver> animationObservers = new HashSet<>();
+    private Set<IGameStateObserver> stateObservers = new HashSet<>();
 
     private GameManager() {
     }
@@ -32,21 +34,14 @@ public class GameManager {
         return instance;
     }
 
-    public void addObserver(IGameAnimationObserver observer) {
-        this.observers.add(observer);
+    public void addAnimationObserver(IGameAnimationObserver observer) {
+        this.animationObservers.add(observer);
     }
 
-    private void notifyCardDrawn() {
-        for (var observer : observers) {
-            observer.onCardDrawn();
-        }
+    public void addStateObserver(IGameStateObserver observer) {
+        this.stateObservers.add(observer);
     }
 
-    private void notifyCardDiscarded() {
-        for (var observer : observers) {
-            observer.onCardDiscarded();
-        }
-    }
 
     public Stack<Card> getCurrentPlayerCards() {
         Player p = context.getCurrentPlayer();
@@ -64,10 +59,7 @@ public class GameManager {
         new GiveCardsToPlayersCommand().execute();
         new GeneratePlayersOrderCommand().execute();
 
-        // Isso aqui é necessário pra trocar do menu para o jogo de fato de forma adequada, com todos os dados configurados.
-        var sm = ScreenManager.getInstance();
-        GameController controller = sm.getLoader(Screen.GAME).getController();
-        controller.render();
+        notifyStartGame();
     }
 
 
@@ -84,5 +76,26 @@ public class GameManager {
         notifyCardDiscarded();
         new PlayerDrawCardFromPileCommand(player, drawPile).execute();
         notifyCardDrawn();
+    }
+
+    /* Métodos que executam os observadores */
+
+    private void notifyCardDrawn() {
+        for (var observer : animationObservers) {
+            observer.onCardDrawn();
+        }
+    }
+
+    private void notifyCardDiscarded() {
+        for (var observer : animationObservers) {
+            observer.onCardDiscarded();
+        }
+    }
+
+    private void notifyStartGame() {
+        System.out.println("Entrou em notify");
+        for (var observer : stateObservers) {
+            observer.onStart();
+        }
     }
 }

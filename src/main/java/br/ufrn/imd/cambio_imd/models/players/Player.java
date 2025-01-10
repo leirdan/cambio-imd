@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.models.players;
 
+import br.ufrn.imd.cambio_imd.enums.PlayerType;
 import br.ufrn.imd.cambio_imd.exceptions.EmptyCardException;
 import br.ufrn.imd.cambio_imd.models.Entity;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
@@ -9,6 +10,7 @@ public class Player extends Entity {
     private boolean wrongCut = false;
     private boolean prohibitedCut = false;
     private CardHand cardHand = new CardHand();
+    private PlayerType type = PlayerType.ROBOT;
 
     private int cardIndex = -1;
 
@@ -16,23 +18,26 @@ public class Player extends Entity {
         super();
     }
 
-    public Player(String name) {
+    public Player(String name, PlayerType type) {
         super();
         this.name = name;
+        this.type = type;
     }
 
-    public Player(String name, boolean wrongCut, CardHand cardHand) {
+    public Player(String name, boolean wrongCut, CardHand cardHand, PlayerType type) {
         super();
         this.name = name;
         this.wrongCut = wrongCut;
         this.cardHand = cardHand;
+        this.type = type;
     }
 
-    public Player(int id, String name, boolean wrongCut, CardHand cardHand) {
+    public Player(int id, String name, boolean wrongCut, CardHand cardHand, PlayerType type) {
         super(id);
         this.name = name;
         this.wrongCut = wrongCut;
         this.cardHand = cardHand;
+        this.type = type;
     }
 
     public String getName() {
@@ -85,6 +90,14 @@ public class Player extends Entity {
 
     public void setWrongCut(boolean wrongCut) {
         this.wrongCut = wrongCut;
+    }
+
+    /**
+     * Informa se o jogador é humano ou robô.
+     * @return
+     */
+    public boolean isHuman(){
+        return this.type == PlayerType.HUMAN;
     }
     
 }

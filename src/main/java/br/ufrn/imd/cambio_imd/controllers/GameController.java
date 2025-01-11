@@ -7,6 +7,8 @@ import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -74,6 +77,7 @@ public class GameController extends ControllerBase {
             public void onStart() {
                 uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 render();
+                startTurn();
             }
 
             @Override
@@ -84,8 +88,19 @@ public class GameController extends ControllerBase {
 
             @Override
             public void onChangeTurn() {
-                uiManager.addMessageOnHistory("Agora é o turno de: " + gameManager.getCurrentPlayerName());
+                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 render();
+                startTurn();
+            }
+
+            private void startTurn() {
+                if (gameManager.isCurrentPlayerHuman()) {
+                    enablePlayerControls();
+                }
+                else {
+                    disablePlayerControls();
+                    handleBotTurn();
+                }
             }
         });
 
@@ -124,13 +139,42 @@ public class GameController extends ControllerBase {
         });
     }
 
-    public void render() {
+    private void render() {
         try {
             renderHistory();
             renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    /**
+     *
+     */
+    private void handleBotTurn() {
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.seconds(1 + new Random().nextInt(3, 6)), // Delay entre 1 e 3 segundos
+                event ->{
+                    int percentage = new Random().nextInt(100);
+                    gameManager.handleBotAction(percentage);
+                }
+        ));
+        timeline.setCycleCount(1);
+        timeline.play();
+    }
+
+    private void enablePlayerControls(){
+        playBtn.setDisable(false);
+        swapBtn.setDisable(false);
+        optionsBox.setDisable(false);
+    }
+
+    private void disablePlayerControls() {
+        playBtn.setDisable(true);
+        swapBtn.setDisable(true);
+        optionsBox.setDisable(true);
+        // pedir câmbio botão false
+        // pular vez botão false
     }
 
 
@@ -198,12 +242,10 @@ public class GameController extends ControllerBase {
     }
 
     protected void handlePlayBtnClick() {
-        System.out.println("Helloooo play");
         gameManager.playCard(uiManager.getClickedCard());
     }
 
     protected void handleSwapBtnClick() {
-        System.out.println("Helloooo swaaaap");
     }
 
     protected void renderHistory() {

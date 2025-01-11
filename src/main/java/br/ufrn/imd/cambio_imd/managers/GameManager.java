@@ -13,6 +13,7 @@ import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import javafx.event.ActionEvent;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
@@ -36,7 +37,6 @@ public class GameManager {
     }
 
 
-
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
@@ -55,12 +55,40 @@ public class GameManager {
         new SetGameModeCommand(event).execute();
     }
 
+    public boolean isCurrentPlayerHuman() {
+        return context.getCurrentPlayer().isHuman();
+    }
+
+    public void handleBotAction(int percentage) {
+        if (isCurrentPlayerHuman()) {
+            return;
+        }
+        // Se tiver as condições corretas, peça câmbio
+        // Se não, só joga
+        // Por último passa a vez
+
+        // e algumas outras condições...
+        if (percentage <= 15) {
+            callCambio();
+        } else if (percentage > 15 && percentage <= 80) {
+            int limit = getCurrentPlayerCards().size();
+            int cardIndex = new Random().nextInt(limit);
+            playCard(cardIndex);
+        } else {
+            skipTurn();
+        }
+    }
+
     public void skipTurn() {
+        notifyAction(getCurrentPlayerName() + " passou a vez!");
         // seta o id pro próximo player
+        advanceTurn();
     }
 
     public void callCambio() {
-        // lógica de pedir cambio
+        // lógico de pedir cambio
+        notifyAction(getCurrentPlayerName() + " pediu câmbio!");
+        advanceTurn();
     }
 
     /*
@@ -111,6 +139,7 @@ public class GameManager {
 
         // se não está, então jogue normalmente.
         var player = context.getCurrentPlayer();
+        var cardStr = getCurrentPlayerCards().get(cardIndex).toString();
         var drawPile = context.getDrawPile();
         var discardPile = context.getDiscardPile();
 
@@ -119,17 +148,19 @@ public class GameManager {
         new PlayerDrawCardFromPileCommand(player, drawPile).execute();
         notifyCardDrawn();
 
+        notifyAction(getCurrentPlayerName() + " jogou carta " + cardStr);
+
         advanceTurn();
-        notifyChangeTurn();
     }
 
     private void advanceTurn() {
         int index = context.getCurrentPlayerIndex();
         if (index >= context.getPlayers().getData().size()) {
-           index = 0;
+            index = 0;
         }
 
         context.setCurrentPlayerIndex(++index);
+        notifyChangeTurn();
     }
 
     public Stack<Card> getCurrentPlayerCards() {

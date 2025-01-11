@@ -50,62 +50,45 @@ public class GameManager {
         notifyStartGame();
     }
 
-    public void cutPlay(){
-        var currentPlayer = context.getCurrentPlayerToCut();
-        var discardPile = context.getDiscardPile();
-        
-        // Primeiramente, chamar o corte. O CallCut vai fazer com que o jogador a fazer o corte seja setado.
-        // Esse não é um método de entrada. O método de entrada ainda deve ser inserido.
-        new CallCutCommand(currentPlayer.getId()).execute();
-
-        // Depois, deixamos o jogador fazer sua jogada. Este é o corte sendo realizado.
-        new PlayerDiscardCardOnPileCommand(currentPlayer, discardPile, currentPlayer.getCardIndex());
-        notifyCardDiscarded();
-
-        // O jogo passa a avaliar a jogada do corte. para determinar se o jogador fez o corte correto ou não, e se pode 
-        // continuar jogando ou não.
-        new CutCommand().execute();
-
-        if(currentPlayer.isProhibitedCut() || currentPlayer.isWrongCut()){
-            new PlayerDrawCardFromPileCommand(context.getCurrentPlayerToCut(), context.getDrawPile()).execute();
-            notifyCardDrawn();
-        }
-
-        context.setCurrentPlayerToCut(null);
-    }
-    
-    public void normalPlay(){
-        var currentPlayer = context.getCurrentPlayer();
+    public void playTurn() {
+        var currentPlayer = context.getCurrentPlayerToCut() != null 
+                            ? context.getCurrentPlayerToCut() 
+                            : context.getCurrentPlayer();
         var discardPile = context.getDiscardPile();
         var drawPile = context.getDrawPile();
 
-        new PlayerDrawCardFromPileCommand(currentPlayer, drawPile).execute();
-        notifyCardDrawn();
+        new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
 
-        // Não sei como está sendo feita a lógica de integrar a interface gráfica aqui.
-
-        new PlayerDiscardCardOnPileCommand(currentPlayer, discardPile, currentPlayer.getCardIndex()).execute();
-        notifyCardDiscarded();
-    }
-
-    public void matchLoop(){
-        boolean Encerrar = false; //< temos que ver como podemos ver a condição de parada
-        // a ideia é fazer com que até todos os jogadores não possam mais cortar ou até que os jogadores não queiram mais, realizar verificação
+        if (context.getCurrentPlayerToCut() != null) {
+            // Lógica de corte
+            new CallCutCommand(currentPlayer.getId()).execute();
     
-        while(Encerrar){
-            cutPlay();
-        }
-
-        new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
-        while(context.getWinner() == null){
-            while(context.getCurrentPlayerToCut() != null){
-                cutPlay();
+            new PlayerDiscardCardOnPileCommand(currentPlayer, discardPile, currentPlayer.getCardIndex()).execute();
+            notifyCardDiscarded();
+    
+            // Avalia a jogada de corte
+            new CutCommand().execute();
+    
+            if (currentPlayer.isProhibitedCut() || currentPlayer.isWrongCut()) {
+                new PlayerDrawCardFromPileCommand(currentPlayer, drawPile).execute();
+                notifyCardDrawn();
             }
-            normalPlay();
+    
+            // Reseta o estado do corte
+            context.setCurrentPlayerToCut(null);
+    
+        } else {
+            // Jogada normal
+            new PlayerDrawCardFromPileCommand(currentPlayer, drawPile).execute();
+            notifyCardDrawn();
+    
+            new PlayerDiscardCardOnPileCommand(currentPlayer, discardPile, currentPlayer.getCardIndex()).execute();
+            notifyCardDiscarded();
         }
 
         new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
     }
+
 
     public void setupGameMode(ActionEvent event) {
         new SetGameModeCommand(event).execute();

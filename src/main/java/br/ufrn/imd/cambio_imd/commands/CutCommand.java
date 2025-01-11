@@ -9,9 +9,10 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 
 public class CutCommand implements ICommand {
 
+
     @Override
-    public void execute(){
-        // Carregando objetos para avaliação
+    public void execute() {
+   /*     // Carregando objetos para avaliação
         GameContext context = GameContext.getInstance();
         Players players = context.getPlayers();
         Player currentPlayer = players.findById(context.getLastPlayerToPlayId()).orElse(null);
@@ -35,6 +36,9 @@ public class CutCommand implements ICommand {
                 currentPlayer.setWrongCut(true);
             }
         }
+    }
+
+    */
     }
 }
 

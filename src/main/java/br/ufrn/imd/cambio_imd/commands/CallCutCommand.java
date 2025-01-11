@@ -26,7 +26,7 @@ public class CallCutCommand implements ICommand {
             System.out.println("Jogador não pode cortar!");
             // TODO: Ações para continuar o corte sem o jogador
         } else {
-            context.setCurrentPlayerToCut(currentPlayer); //< Setando o jogador atual para cortar
+            // context.setCurrentPlayerToCut(currentPlayer); //< Setando o jogador atual para cortar
         }
     }
     

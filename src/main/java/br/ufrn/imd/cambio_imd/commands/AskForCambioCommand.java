@@ -12,6 +12,6 @@ public class AskForCambioCommand implements ICommand {
     @Override
     public void execute(){
         GameContext context = GameContext.getInstance();
-        context.setPlayerToAskCambio(playerId);
+        //context.setPlayerToAskCambio(playerId);
     }
 }

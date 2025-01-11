@@ -3,6 +3,7 @@ package br.ufrn.imd.cambio_imd.managers;
 import br.ufrn.imd.cambio_imd.commands.*;
 import br.ufrn.imd.cambio_imd.controllers.GameController;
 import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.enums.Round;
 import br.ufrn.imd.cambio_imd.enums.Screen;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
@@ -50,10 +51,23 @@ public class GameManager {
         notifyStartGame();
     }
 
+    public void setupGameMode(ActionEvent event) {
+        new SetGameModeCommand(event).execute();
+    }
+
+    public void skipTurn() {
+        // seta o id pro próximo player
+    }
+
+    public void callCambio() {
+        // lógica de pedir cambio
+    }
+
+    /*
     public void playTurn() {
-        var currentPlayer = context.getCurrentPlayerToCut() != null 
-                            ? context.getCurrentPlayerToCut() 
-                            : context.getCurrentPlayer();
+        var currentPlayer = context.getCurrentPlayerToCut() != null
+                ? context.getCurrentPlayerToCut()
+                : context.getCurrentPlayer();
         var discardPile = context.getDiscardPile();
         var drawPile = context.getDrawPile();
 
@@ -62,39 +76,40 @@ public class GameManager {
         if (context.getCurrentPlayerToCut() != null) {
             // Lógica de corte
             new CallCutCommand(currentPlayer.getId()).execute();
-    
+
             new PlayerDiscardCardOnPileCommand(currentPlayer, discardPile, currentPlayer.getCardIndex()).execute();
             notifyCardDiscarded();
-    
+
             // Avalia a jogada de corte
             new CutCommand().execute();
-    
+
             if (currentPlayer.isProhibitedCut() || currentPlayer.isWrongCut()) {
                 new PlayerDrawCardFromPileCommand(currentPlayer, drawPile).execute();
                 notifyCardDrawn();
             }
-    
+
             // Reseta o estado do corte
             context.setCurrentPlayerToCut(null);
-    
+
         } else {
             // Jogada normal
             new PlayerDrawCardFromPileCommand(currentPlayer, drawPile).execute();
             notifyCardDrawn();
-    
+
             new PlayerDiscardCardOnPileCommand(currentPlayer, discardPile, currentPlayer.getCardIndex()).execute();
             notifyCardDiscarded();
         }
 
         new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
     }
+     */
+    public void playCard(int cardIndex) {
+        // se está em turno de cortes, faça as verificações e qualquer coisa pule pro próximo.
+        if (context.getRoundType() == Round.CUT) {
 
+        }
 
-    public void setupGameMode(ActionEvent event) {
-        new SetGameModeCommand(event).execute();
-    }
-
-    public void playCard(int cardIndex) { // Pode ser obsoleto ou não.
+        // se não está, então jogue normalmente.
         var player = context.getCurrentPlayer();
         var drawPile = context.getDrawPile();
         var discardPile = context.getDiscardPile();
@@ -103,6 +118,18 @@ public class GameManager {
         notifyCardDiscarded();
         new PlayerDrawCardFromPileCommand(player, drawPile).execute();
         notifyCardDrawn();
+
+        advanceTurn();
+        notifyChangeTurn();
+    }
+
+    private void advanceTurn() {
+        int index = context.getCurrentPlayerIndex();
+        if (index >= context.getPlayers().getData().size()) {
+           index = 0;
+        }
+
+        context.setCurrentPlayerIndex(++index);
     }
 
     public Stack<Card> getCurrentPlayerCards() {
@@ -134,7 +161,6 @@ public class GameManager {
     }
 
     private void notifyStartGame() {
-        System.out.println("Entrou em notify");
         for (var observer : stateObservers) {
             observer.onStart();
         }

@@ -15,14 +15,9 @@ public class GameContext {
      */
     private Players players = new Players(); //< Lista de jogadores
 
-    // Jogadas a serem realizdas
     private int currentPlayerIndex = 0; //< Atual jogador na ordem cronológica original do jogo (Acesso de avanço de ordem de jogo, por isso um inteiro)
-    private Player currentPlayerToCut = null; //< Atual jogador a fazer o seu corte, fora da ordem cronológica (Acesso direto, sem ordem, por isso um objeto)
-    private int lastPlayerToPlayId = 0; //< Último jogador a realizar uma jogada, seja ela de corte, seja ela de descarte padrão.
-    private int playerToAskCambio = -1;
-    // Resultado de jogo
+    private int playerThatAskedCambio = -1;
     private Player winner = null; //< Jogador vencedor
-
     private Round roundType = Round.CUT;
 
 
@@ -61,6 +56,14 @@ public class GameContext {
         this.players = players;
     }
 
+    public Round getRoundType() {
+        return this.roundType;
+    }
+
+    public void setRoundType(Round round){
+        this.roundType = round;
+    }
+
     public Player getCurrentPlayer() {
         if (players.getData() == null || players.getData().isEmpty())
             throw new UnitializedGameException("Players were not set!");
@@ -73,13 +76,6 @@ public class GameContext {
         return playersArray[currentPlayerIndex];
     }
 
-    public Player getCurrentPlayerToCut() {
-        return currentPlayerToCut;
-    }
-
-    public void setCurrentPlayerToCut(Player currentPlayerToCut) {
-        this.currentPlayerToCut = currentPlayerToCut;
-    }
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
@@ -87,14 +83,6 @@ public class GameContext {
 
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public int getLastPlayerToPlayId() {
-        return lastPlayerToPlayId;
-    }
-
-    public void setLastPlayerToPlayId(int lastPlayerToPlayId) {
-        this.lastPlayerToPlayId = lastPlayerToPlayId;
     }
 
     public void setWinner(Player winner) {
@@ -143,13 +131,12 @@ public class GameContext {
         this.revealedCardsLimit = revealedCardsLimit;
     }
 
-    public int getPlayerToAskCambio() {
-        return playerToAskCambio;
+
+    public int getPlayerThatAskedCambio() {
+        return playerThatAskedCambio;
     }
 
-    public void setPlayerToAskCambio(int playerToAskCambio) {
-        this.playerToAskCambio = playerToAskCambio;
+    public void setPlayerThatAskedCambio(int playerThatAskedCambio) {
+        this.playerThatAskedCambio = playerThatAskedCambio;
     }
-
-    
 }

@@ -47,7 +47,7 @@ public class GameController extends ControllerBase {
     private ImageView drawPileImage;
 
     @FXML
-    private TextArea messageBox;
+    private TextArea historyTextArea;
 
     private final Button playBtn = new Button();
     private final Button swapBtn = new Button();
@@ -72,6 +72,7 @@ public class GameController extends ControllerBase {
         gameManager.addStateObserver(new IGameStateObserver() {
             @Override
             public void onStart() {
+                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 render();
             }
 
@@ -83,6 +84,7 @@ public class GameController extends ControllerBase {
 
             @Override
             public void onChangeTurn() {
+                uiManager.addMessageOnHistory("Agora é o turno de: " + gameManager.getCurrentPlayerName());
                 render();
             }
         });
@@ -122,10 +124,9 @@ public class GameController extends ControllerBase {
         });
     }
 
-
     public void render() {
         try {
-            // renderHistory();
+            renderHistory();
             renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
@@ -205,11 +206,10 @@ public class GameController extends ControllerBase {
         System.out.println("Helloooo swaaaap");
     }
 
-    // TODO: colocar de volta o historyTextArea
     protected void renderHistory() {
-        messageBox.clear();
+        historyTextArea.clear();
         for (var message : uiManager.getHistory()) {
-            messageBox.appendText(message);
+            historyTextArea.appendText(message);
         }
     }
 

@@ -6,11 +6,12 @@ import br.ufrn.imd.cambio_imd.models.players.Player;
 public class SuperCardCommand implements ICommand{
     @Override
     public void execute() {
+        /*
         var context = GameContext.getInstance();
         var topCard = context.getDiscardPile().getCards().peek();
 
         if(topCard.isSuper()){
-            var lastPlayerId = context.getLastPlayerToPlayId();       
+            var lastPlayerId = context.getLastPlayerToPlayId();
             var optionalPlayer = context.getPlayers().findById(lastPlayerId);
             if (optionalPlayer.isPresent()) {
                 Player player = optionalPlayer.get();
@@ -21,5 +22,7 @@ public class SuperCardCommand implements ICommand{
                 }
             }
         }
+
+         */
     }
 }

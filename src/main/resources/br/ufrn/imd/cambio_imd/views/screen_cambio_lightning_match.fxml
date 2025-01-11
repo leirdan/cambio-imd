@@ -89,7 +89,7 @@
         <VBox alignment="CENTER" layoutX="539.0" layoutY="44.0" prefHeight="208.0" prefWidth="117.0" />
         <VBox layoutX="24.0" layoutY="46.0" prefHeight="149.0" prefWidth="194.0">
             <children>
-                <TextArea fx:id="messageBox" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                <TextArea fx:id="historyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
             </children>
         </VBox>
     </children>

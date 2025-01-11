@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -29,13 +28,10 @@ import java.util.Stack;
  */
 public class GameController extends ControllerBase {
     @FXML
-    private TextField playerTextField;
+    private Label playerTurnLabel;
 
     @FXML
     private Label drawPileCountLabel;
-
-    @FXML
-    private TextArea historyTextArea;
 
     @FXML
     private GridPane playerHandGridPane;
@@ -48,6 +44,9 @@ public class GameController extends ControllerBase {
 
     @FXML
     private ImageView drawPileImage;
+
+    @FXML
+    private TextArea messageBox;
 
     private final Button playBtn = new Button();
     private final Button swapBtn = new Button();
@@ -69,24 +68,16 @@ public class GameController extends ControllerBase {
             }
         });
 
-        /* Uso de classe anônima aqui! pra não precisar criar uma somente pra usar aqui*/
-        gameManager.addStateObserver(new IGameStateObserver() {
+        /*
+        gameManager.addStateObserver(() -> new IGameStateObserver() {
             @Override
             public void onStart() {
-                render();
-            }
-
-            @Override
-            public void onAction(String message) {
-                uiManager.addMessageOnHistory(message);
-                renderHistory();
-            }
-
-            @Override
-            public void onTurnChange() {
+                System.out.println("Mudou pra jogo");
                 render();
             }
         });
+        */
+        gameManager.addStateObserver(this::render);
 
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
@@ -123,28 +114,44 @@ public class GameController extends ControllerBase {
         });
     }
 
+
     public void render() {
         try {
-            renderHistory();
-            renderPlayerInfo();
+            print("Jogo iniciado");
+            renderPlayerHand();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    protected void renderHistory() {
-        historyTextArea.clear();
-        for (var message : uiManager.getHistory()) {
-            historyTextArea.appendText(message);
-        }
+    @FXML
+    protected void handleCardClick(MouseEvent event) {
+        System.out.println("Clickou!!");
+        int cardIndex = uiManager.getClickedCard();
+
+        if (playerHandGridPane.getChildren().contains(optionsBox))
+            playerHandGridPane.getChildren().remove(optionsBox);
+
+        Node node = playerHandGridPane.getChildren().get(cardIndex);
+        int col = GridPane.getColumnIndex(node);
+        int row = GridPane.getRowIndex(node);
+        // Se estiver na 1ª linha aparece em cima da carta, senão, aparece abaixo.
+        optionsBox.setTranslateY(row == 0 ? -50 : 50);
+        applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_IN);
+
+        playerHandGridPane.add(optionsBox, col, row);
     }
 
-    protected void renderPlayerInfo() {
-        playerTextField.setText(gameManager.getCurrentPlayerName());
-        renderPlayerHand();
+    protected void handlePlayBtnClick() {
+        System.out.println("Helloooo play");
+        gameManager.playCard(uiManager.getClickedCard());
     }
 
-    protected void renderPlayerHand() {
+    protected void handleSwapBtnClick() {
+        System.out.println("Helloooo swaaaap");
+    }
+
+    private void renderPlayerHand() {
         /**
          * Variáveis importantes de controle:
          * MAX_COLUMN: determina o índice máximo das colunas do gridPane, ou seja, são 6 colunas (índice 0 até 5)
@@ -184,30 +191,9 @@ public class GameController extends ControllerBase {
         }
     }
 
-    @FXML
-    protected void handleCardClick(MouseEvent event) {
-        int cardIndex = uiManager.getClickedCard();
-
-        if (playerHandGridPane.getChildren().contains(optionsBox))
-            playerHandGridPane.getChildren().remove(optionsBox);
-
-        Node node = playerHandGridPane.getChildren().get(cardIndex);
-        int col = GridPane.getColumnIndex(node);
-        int row = GridPane.getRowIndex(node);
-        // Se estiver na 1ª linha aparece em cima da carta, senão, aparece abaixo.
-        optionsBox.setTranslateY(row == 0 ? -50 : 50);
-        applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_IN);
-
-        playerHandGridPane.add(optionsBox, col, row);
-    }
-
-    protected void handlePlayBtnClick() {
-        System.out.println("Helloooo play");
-        gameManager.playCard(uiManager.getClickedCard());
-    }
-
-    protected void handleSwapBtnClick() {
-        System.out.println("Helloooo swaaaap");
+    private void print(String msg) {
+        String instant = uiManager.getFormattedInstant();
+        messageBox.appendText("[" + instant + "]: " + msg + "\n");
     }
 
 
@@ -223,8 +209,7 @@ public class GameController extends ControllerBase {
             playerHandGridPane.getChildren().remove(cardNode);
             renderPlayerHand();
 
-            // Coleta a imagem da carta no topo da pilha de descarte
-            Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
+            Image cardImage = CardAssetMapper.getAsset(gameManager.getCurrentPlayerCards().get(uiManager.getClickedCard()));
 
             ImageView discardImageView = new ImageView(cardImage);
             discardImageView.setFitWidth(uiManager.getCardWidth());

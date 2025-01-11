@@ -1,8 +1,6 @@
 package br.ufrn.imd.cambio_imd.dao;
 
-import br.ufrn.imd.cambio_imd.exceptions.InvalidDataException;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
-import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -20,7 +18,7 @@ public class GameContext {
     private int currentPlayerIndex = 0; //< Atual jogador na ordem cronológica original do jogo (Acesso de avanço de ordem de jogo, por isso um inteiro)
     private Player currentPlayerToCut = null; //< Atual jogador a fazer o seu corte, fora da ordem cronológica (Acesso direto, sem ordem, por isso um objeto)
     private int lastPlayerToPlayId = 0; //< Último jogador a realizar uma jogada, seja ela de corte, seja ela de descarte padrão.
-    
+    private int playerToAskCambio = -1;
     // Resultado de jogo
     private Player winner = null; //< Jogador vencedor
 
@@ -62,18 +60,14 @@ public class GameContext {
 
     public Player getCurrentPlayer() {
         if (players.getData() == null || players.getData().isEmpty())
-            throw new UnitializedGameException("Jogadores não foram inicializados corretamente!");
+            throw new UnitializedGameException("Players were not set!");
 
         int size = players.getData().size();
         if (currentPlayerIndex >= size)
             currentPlayerIndex = 0;
+
         var playersArray = players.getData().toArray(new Player[0]);
-
-        var player = playersArray[currentPlayerIndex];
-        if (player == null)
-            throw new InvalidDataException("Jogador não foi encontrado nesse índice!");
-
-        return player;
+        return playersArray[currentPlayerIndex];
     }
 
     public Player getCurrentPlayerToCut() {
@@ -102,6 +96,10 @@ public class GameContext {
 
     public void setWinner(Player winner) {
         this.winner = winner;
+    }
+
+    public Player getWinner(){
+        return this.winner;
     }
 
     /*
@@ -141,4 +139,14 @@ public class GameContext {
     public void setRevealedCardsLimit(int revealedCardsLimit) {
         this.revealedCardsLimit = revealedCardsLimit;
     }
+
+    public int getPlayerToAskCambio() {
+        return playerToAskCambio;
+    }
+
+    public void setPlayerToAskCambio(int playerToAskCambio) {
+        this.playerToAskCambio = playerToAskCambio;
+    }
+
+    
 }

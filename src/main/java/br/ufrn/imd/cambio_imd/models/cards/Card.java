@@ -54,10 +54,6 @@ public class Card {
         return this.data.getValue();
     }
 
-    @Override
-    public String toString(){
-        return getKey() + " de " + getSuit();
-    }
 
     /**
      * @return

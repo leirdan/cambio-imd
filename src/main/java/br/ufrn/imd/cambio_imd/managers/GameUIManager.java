@@ -10,7 +10,6 @@ import javafx.scene.control.TextArea;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class GameUIManager {
@@ -18,7 +17,6 @@ public class GameUIManager {
     private double cardHeight;
     private int clickedCard;
     private Point2D discardPaneCoords = new Point2D(175, 12);
-    private ArrayList<String> history = new ArrayList<>();
     private static GameUIManager instance;
     private GameContext context = GameContext.getInstance();
 
@@ -56,6 +54,17 @@ public class GameUIManager {
         return instance;
     }
 
+
+    public void renderMain(Label playerLabel, Label drawPileLabel) {
+        Player p = context.getCurrentPlayer();
+        if (p == null)
+            playerLabel.setText("Turno não definido");
+        else
+            playerLabel.setText("Turno de " + p.getName());
+
+        drawPileLabel.setText("Restam: " + context.getDrawPileCount());
+    }
+
     public String getPlayerLabelText() {
         Player p = context.getCurrentPlayer();
         if (p == null)
@@ -64,13 +73,8 @@ public class GameUIManager {
             return "Turno de " + p.getName();
     }
 
-    public void addMessageOnHistory(String msg) {
-        String instant = getFormattedInstant();
-        this.history.add("[" + instant + "]: " + msg + "\n");
-    }
-
-    public ArrayList<String> getHistory() {
-        return this.history;
+    public String getDrawPileCountText() {
+        return "Restam " + context.getDrawPile().getCards().size() + " cartas.";
     }
 
     public String getFormattedInstant() {

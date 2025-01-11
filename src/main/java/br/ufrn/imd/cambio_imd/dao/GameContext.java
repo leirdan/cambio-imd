@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.dao;
 
+import br.ufrn.imd.cambio_imd.enums.Round;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
@@ -18,9 +19,11 @@ public class GameContext {
     private int currentPlayerIndex = 0; //< Atual jogador na ordem cronológica original do jogo (Acesso de avanço de ordem de jogo, por isso um inteiro)
     private Player currentPlayerToCut = null; //< Atual jogador a fazer o seu corte, fora da ordem cronológica (Acesso direto, sem ordem, por isso um objeto)
     private int lastPlayerToPlayId = 0; //< Último jogador a realizar uma jogada, seja ela de corte, seja ela de descarte padrão.
-    
+    private int playerToAskCambio = -1;
     // Resultado de jogo
     private Player winner = null; //< Jogador vencedor
+
+    private Round roundType = Round.CUT;
 
 
     /**
@@ -98,6 +101,10 @@ public class GameContext {
         this.winner = winner;
     }
 
+    public Player getWinner(){
+        return this.winner;
+    }
+
     /*
      * Métodos relacionados ao gerenciamento de pilhas
      */
@@ -135,4 +142,14 @@ public class GameContext {
     public void setRevealedCardsLimit(int revealedCardsLimit) {
         this.revealedCardsLimit = revealedCardsLimit;
     }
+
+    public int getPlayerToAskCambio() {
+        return playerToAskCambio;
+    }
+
+    public void setPlayerToAskCambio(int playerToAskCambio) {
+        this.playerToAskCambio = playerToAskCambio;
+    }
+
+    
 }

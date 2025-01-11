@@ -32,80 +32,112 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.MenuController">
+<VBox prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.MenuController">
    <children>
-      <AnchorPane prefHeight="425.0" prefWidth="640.0">
+      <AnchorPane prefHeight="585.0" prefWidth="1024.0">
          <children>
-            <HBox layoutX="81.0" layoutY="65.0" prefHeight="286.0" prefWidth="484.0" spacing="20.0">
+            <HBox layoutX="141.0" layoutY="116.0" prefHeight="392.0" prefWidth="735.0" spacing="97.0">
                <children>
-                  <VBox prefHeight="284.0" prefWidth="148.0">
+                  <VBox prefHeight="409.0" prefWidth="165.0">
                      <children>
-                        <ImageView fitHeight="148.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView blendMode="MULTIPLY" fitHeight="177.0" fitWidth="185.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@assets/img/game/partida_rapida_icon.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="148.0" text="Saideira" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="2.0" prefHeight="46.0" prefWidth="148.0" text=" Partida rápida com 6 cartas iniciais, vendo 1. Ideal para quem quer diversão, mas tem pressa." textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font size="9.0" />
-                           </font>
-                        </Label>
-                        <Pane prefHeight="38.0" prefWidth="148.0">
+                        <Pane prefHeight="219.0" prefWidth="201.0">
                            <children>
-                              <Button fx:id="sixCardsBtn" layoutX="31.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
+                              <Button fx:id="sixCardsBtn1" layoutX="21.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="48.0" prefWidth="134.0" text="Selecionar">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Button>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="13.0" layoutY="17.0" prefHeight="28.0" prefWidth="148.0" text="Saideira">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="3.0" layoutY="46.0" lineSpacing="2.0" prefHeight="96.0" prefWidth="171.0" text=" Partida rápida com 6 cartas iniciais, vendo 1. Ideal para quem quer diversão, mas tem pressa." textAlignment="CENTER" wrapText="true">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </Pane>
                      </children>
                   </VBox>
-                  <VBox prefHeight="284.0" prefWidth="148.0">
+                  <VBox prefHeight="409.0" prefWidth="165.0">
                      <children>
-                        <ImageView fitHeight="148.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView blendMode="MULTIPLY" fitHeight="177.0" fitWidth="185.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@assets/img/game/partida_classica_icon.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="148.0" text="Classico" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="2.0" prefHeight="43.0" prefWidth="148.0" text=" Partida rápida com 8 cartas iniciais, vendo 2. É o prato principal da casa." textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font size="9.0" />
-                           </font>
-                        </Label>
-                        <Pane prefHeight="40.0" prefWidth="148.0">
+                        <Pane prefHeight="219.0" prefWidth="201.0">
                            <children>
-                              <Button fx:id="eightCardsBtn" layoutX="31.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
+                              <Button fx:id="eightCardsBtn" layoutX="21.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="48.0" prefWidth="134.0" text="Selecionar">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Button>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="13.0" layoutY="17.0" prefHeight="28.0" prefWidth="148.0" text="Classico">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="3.0" layoutY="46.0" lineSpacing="2.0" prefHeight="96.0" prefWidth="171.0" text="Partida rapida com 8 cartas iniciais, vendo 2. E o prato principal da casa." textAlignment="CENTER" wrapText="true">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </Pane>
                      </children>
                   </VBox>
-                  <VBox prefHeight="284.0" prefWidth="148.0">
+                  <VBox prefHeight="409.0" prefWidth="165.0">
                      <children>
-                        <ImageView fitHeight="148.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView blendMode="MULTIPLY" fitHeight="177.0" fitWidth="185.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@assets/img/game/partida_desafiante_icon.png" />
                            </image>
                         </ImageView>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="148.0" text="Divertido e desafiante" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="2.0" prefHeight="49.0" prefWidth="148.0" text=" Partida mais longa, com 12 cartas iniciais, vendo 1. Pra quem so quer ver o circo pegar fogo..." textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font size="9.0" />
-                           </font>
-                        </Label>
-                        <Pane prefHeight="27.0" prefWidth="148.0">
+                        <Pane prefHeight="219.0" prefWidth="201.0">
                            <children>
-                              <Button fx:id="twelveCardsBtn" layoutX="31.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="28.0" prefWidth="86.0" text="Selecionar" />
+                              <Button fx:id="twelveCardsBtn" layoutX="21.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="48.0" prefWidth="134.0" text="Selecionar">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Button>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="13.0" layoutY="17.0" prefHeight="28.0" prefWidth="148.0" text="Desafiante">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="3.0" layoutY="46.0" lineSpacing="2.0" prefHeight="96.0" prefWidth="171.0" text=" Partida mais longa, com 12 cartas iniciais, vendo 1. Pra quem so quer ver o circo pegar fogo..." textAlignment="CENTER" wrapText="true">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </Pane>
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <Label layoutX="245.0" layoutY="37.0" text="Selecionar modo de jogo:" />
+            <Label layoutX="346.0" layoutY="72.0" prefHeight="40.0" prefWidth="343.0" text="Selecionar modo de jogo:">
+               <font>
+                  <Font size="28.0" />
+               </font></Label>
          </children>
       </AnchorPane>
    </children>

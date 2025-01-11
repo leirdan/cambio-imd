@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -28,7 +29,7 @@ import java.util.Stack;
  */
 public class GameController extends ControllerBase {
     @FXML
-    private Label playerTurnLabel;
+    private TextField playerTextField;
 
     @FXML
     private Label drawPileCountLabel;
@@ -68,16 +69,23 @@ public class GameController extends ControllerBase {
             }
         });
 
-        /*
-        gameManager.addStateObserver(() -> new IGameStateObserver() {
+        gameManager.addStateObserver(new IGameStateObserver() {
             @Override
             public void onStart() {
-                System.out.println("Mudou pra jogo");
+                render();
+            }
+
+            @Override
+            public void onAction(String message) {
+                uiManager.addMessageOnHistory(message);
+                renderHistory();
+            }
+
+            @Override
+            public void onChangeTurn() {
                 render();
             }
         });
-        */
-        gameManager.addStateObserver(this::render);
 
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
@@ -117,38 +125,17 @@ public class GameController extends ControllerBase {
 
     public void render() {
         try {
-            print("Jogo iniciado");
-            renderPlayerHand();
+            // renderHistory();
+            renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    @FXML
-    protected void handleCardClick(MouseEvent event) {
-        System.out.println("Clickou!!");
-        int cardIndex = uiManager.getClickedCard();
 
-        if (playerHandGridPane.getChildren().contains(optionsBox))
-            playerHandGridPane.getChildren().remove(optionsBox);
-
-        Node node = playerHandGridPane.getChildren().get(cardIndex);
-        int col = GridPane.getColumnIndex(node);
-        int row = GridPane.getRowIndex(node);
-        // Se estiver na 1ª linha aparece em cima da carta, senão, aparece abaixo.
-        optionsBox.setTranslateY(row == 0 ? -50 : 50);
-        applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_IN);
-
-        playerHandGridPane.add(optionsBox, col, row);
-    }
-
-    protected void handlePlayBtnClick() {
-        System.out.println("Helloooo play");
-        gameManager.playCard(uiManager.getClickedCard());
-    }
-
-    protected void handleSwapBtnClick() {
-        System.out.println("Helloooo swaaaap");
+    private void renderPlayerInfo() {
+        // playerTextField.setText(gameManager.getCurrentPlayerName());
+        renderPlayerHand();
     }
 
     private void renderPlayerHand() {
@@ -191,11 +178,40 @@ public class GameController extends ControllerBase {
         }
     }
 
-    private void print(String msg) {
-        String instant = uiManager.getFormattedInstant();
-        messageBox.appendText("[" + instant + "]: " + msg + "\n");
+    @FXML
+    protected void handleCardClick(MouseEvent event) {
+        System.out.println("Clickou!!");
+        int cardIndex = uiManager.getClickedCard();
+
+        if (playerHandGridPane.getChildren().contains(optionsBox))
+            playerHandGridPane.getChildren().remove(optionsBox);
+
+        Node node = playerHandGridPane.getChildren().get(cardIndex);
+        int col = GridPane.getColumnIndex(node);
+        int row = GridPane.getRowIndex(node);
+        // Se estiver na 1ª linha aparece em cima da carta, senão, aparece abaixo.
+        optionsBox.setTranslateY(row == 0 ? -50 : 50);
+        applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_IN);
+
+        playerHandGridPane.add(optionsBox, col, row);
     }
 
+    protected void handlePlayBtnClick() {
+        System.out.println("Helloooo play");
+        gameManager.playCard(uiManager.getClickedCard());
+    }
+
+    protected void handleSwapBtnClick() {
+        System.out.println("Helloooo swaaaap");
+    }
+
+    // TODO: colocar de volta o historyTextArea
+    protected void renderHistory() {
+        messageBox.clear();
+        for (var message : uiManager.getHistory()) {
+            messageBox.appendText(message);
+        }
+    }
 
     // Métodos de animação
     // TODO: será que isso é responsabilidade desta classe?
@@ -209,7 +225,7 @@ public class GameController extends ControllerBase {
             playerHandGridPane.getChildren().remove(cardNode);
             renderPlayerHand();
 
-            Image cardImage = CardAssetMapper.getAsset(gameManager.getCurrentPlayerCards().get(uiManager.getClickedCard()));
+            Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
 
             ImageView discardImageView = new ImageView(cardImage);
             discardImageView.setFitWidth(uiManager.getCardWidth());

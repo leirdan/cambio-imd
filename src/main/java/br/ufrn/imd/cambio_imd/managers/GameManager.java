@@ -10,6 +10,7 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.players.Player;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
+import br.ufrn.imd.cambio_imd.utility.RandomGenerator;
 import javafx.event.ActionEvent;
 
 import java.util.HashSet;
@@ -72,7 +73,7 @@ public class GameManager {
             callCambio();
         } else if (percentage > 15 && percentage <= 80) {
             int limit = getCurrentPlayerCards().size();
-            int cardIndex = new Random().nextInt(limit);
+            int cardIndex = RandomGenerator.getInt(limit);
             playCard(cardIndex);
         } else {
             skipTurn();
@@ -153,6 +154,10 @@ public class GameManager {
         advanceTurn();
     }
 
+    /**
+     * Avança para o próximo jogador da lista, notificando
+     * automaticamente a mudança de turno a todos os observadores.
+     */
     private void advanceTurn() {
         int index = context.getCurrentPlayerIndex();
         if (index >= context.getPlayers().getData().size()) {

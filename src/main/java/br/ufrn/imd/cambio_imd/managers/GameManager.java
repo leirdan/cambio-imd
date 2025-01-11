@@ -34,19 +34,7 @@ public class GameManager {
         return instance;
     }
 
-    public void addAnimationObserver(IGameAnimationObserver observer) {
-        this.animationObservers.add(observer);
-    }
 
-    public void addStateObserver(IGameStateObserver observer) {
-        this.stateObservers.add(observer);
-    }
-
-
-    public Stack<Card> getCurrentPlayerCards() {
-        Player p = context.getCurrentPlayer();
-        return p.getHand().getCards();
-    }
 
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
@@ -134,6 +122,20 @@ public class GameManager {
         notifyCardDrawn();
     }
 
+    public Stack<Card> getCurrentPlayerCards() {
+        Player p = context.getCurrentPlayer();
+        return p.getHand().getCards();
+    }
+
+
+    public Card getTopCardOnDiscardPile() {
+        return context.getDiscardPile().getCardOnTop();
+    }
+
+    public String getCurrentPlayerName() {
+        return context.getCurrentPlayer().getName();
+    }
+
     /* Métodos que executam os observadores */
 
     private void notifyCardDrawn() {
@@ -153,5 +155,25 @@ public class GameManager {
         for (var observer : stateObservers) {
             observer.onStart();
         }
+    }
+
+    private void notifyAction(String actionMessage) {
+        for (var observer : stateObservers) {
+            observer.onAction(actionMessage);
+        }
+    }
+
+    private void notifyChangeTurn() {
+        for (var observer : stateObservers) {
+            observer.onChangeTurn();
+        }
+    }
+
+    public void addAnimationObserver(IGameAnimationObserver observer) {
+        this.animationObservers.add(observer);
+    }
+
+    public void addStateObserver(IGameStateObserver observer) {
+        this.stateObservers.add(observer);
     }
 }

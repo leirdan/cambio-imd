@@ -1,5 +1,6 @@
 package br.ufrn.imd.cambio_imd.dao;
 
+import br.ufrn.imd.cambio_imd.enums.Round;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
@@ -21,6 +22,8 @@ public class GameContext {
     private int playerToAskCambio = -1;
     // Resultado de jogo
     private Player winner = null; //< Jogador vencedor
+
+    private Round roundType = Round.CUT;
 
 
     /**

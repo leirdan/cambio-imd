@@ -70,4 +70,9 @@ public class Card {
 
         return Objects.equals(card.getValue(), this.getValue());
     }
+
+    @Override
+    public String toString(){
+        return getKey() + " de " + getSuit();
+    }
 }

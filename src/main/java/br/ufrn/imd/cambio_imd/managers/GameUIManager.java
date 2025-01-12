@@ -18,6 +18,7 @@ public class GameUIManager {
     private double cardHeight;
     private int clickedCard;
     private Point2D discardPaneCoords = new Point2D(175, 12);
+    private int remainingHints = 0;
     private static GameUIManager instance;
     private ArrayList<String> history = new ArrayList<>();
 
@@ -83,5 +84,13 @@ public class GameUIManager {
 
     public void setClickedCard(int clickedCard) {
         this.clickedCard = clickedCard;
+    }
+
+    public int getRemainingHints() {
+        return remainingHints;
+    }
+
+    public void setRemainingHints(int remainingHints) {
+        this.remainingHints = remainingHints;
     }
 }

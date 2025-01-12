@@ -52,7 +52,6 @@ public class GameController extends ControllerBase {
     private TextArea messageBox;
 
     private final Button playBtn = new Button();
-    private final Button swapBtn = new Button();
     private final Button showBtn = new Button();
 
     private VBox optionsBox;
@@ -94,6 +93,10 @@ public class GameController extends ControllerBase {
             public void onSuperCardDetected(int hintsNumber){
                 uiManager.addMessageOnHistory("Você pode ver " + hintsNumber + " cartas!");
                 renderHistory();
+                uiManager.setRemainingHints(hintsNumber);
+                if (optionsBox != null && !optionsBox.getChildren().contains(showBtn)) {
+                    optionsBox.getChildren().add(showBtn);
+                }
             }
 
             @Override
@@ -114,21 +117,12 @@ public class GameController extends ControllerBase {
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
         playBtn.setMinWidth(50);
-        swapBtn.setText("Trocar");
-        swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
-        swapBtn.setMinWidth(50);
         showBtn.setText("Ver");
         showBtn.setOnMouseClicked(click -> handleShowBtnClick());
         showBtn.setMinWidth(50);
 
-        if(!optionsBox.getChildren().contains(showBtn)){
-            optionsBox.getChildren().add(showBtn);
-        }
-
-
-        optionsBox = new VBox(5, playBtn, swapBtn);
+        optionsBox = new VBox(5, playBtn);
         optionsBox.setAlignment(Pos.CENTER);
-        // FIXME: talvez criar uma classe .css pra isso, ou não se só for utilizado aqui
         optionsBox.setStyle("""
                  -fx-background-color: rgba(50, 50, 50, 0.9);
                  -fx-border-color: white;
@@ -156,7 +150,7 @@ public class GameController extends ControllerBase {
 
     public void render() {
         try {
-            // renderHistory();
+            renderHistory();
             renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
@@ -210,7 +204,6 @@ public class GameController extends ControllerBase {
 
     @FXML
     protected void handleCardClick(MouseEvent event) {
-        System.out.println("Clickou!!");
         int cardIndex = uiManager.getClickedCard();
 
         if (playerHandGridPane.getChildren().contains(optionsBox))
@@ -231,29 +224,27 @@ public class GameController extends ControllerBase {
         gameManager.playCard(uiManager.getClickedCard());
     }
 
-    protected void handleSwapBtnClick() {
-        System.out.println("Helloooo swaaaap");
-    }
-    
     @FXML
     protected void handleShowBtnClick() {
-        System.out.println("See a card bih");
         int cardIndex = uiManager.getClickedCard();
         
         ImageView cardImageView = (ImageView) playerHandGridPane.getChildren().get(cardIndex);
-        Node node = playerHandGridPane.getChildren().get(cardIndex);
-        int col = GridPane.getColumnIndex(node);
-        int row = GridPane.getRowIndex(node);
 
         var card = gameManager.getCurrentPlayerCards().get(cardIndex);
 
         Image frontImage = CardAssetMapper.getAsset(card); // Frente da carta
         Image backImage = CardAssetMapper.getBackCardAsset(); // Verso da carta
 
-        animateCardFlip(cardImageView, frontImage, backImage); 
+        animateCardFlip(cardImageView, frontImage, backImage);
+
+        if (uiManager.getRemainingHints() > 0)
+            uiManager.setRemainingHints(uiManager.getRemainingHints() - 1);
+
+        if (optionsBox.getChildren().contains(showBtn) && uiManager.getRemainingHints() == 0) {
+            optionsBox.getChildren().remove(showBtn);
+        }
     }
 
-    // TODO: colocar de volta o historyTextArea
     protected void renderHistory() {
         messageBox.clear();
         for (var message : uiManager.getHistory()) {

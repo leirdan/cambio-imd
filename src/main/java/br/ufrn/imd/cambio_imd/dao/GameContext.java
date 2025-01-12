@@ -2,6 +2,7 @@ package br.ufrn.imd.cambio_imd.dao;
 
 import br.ufrn.imd.cambio_imd.enums.Round;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
+import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -11,7 +12,6 @@ public class GameContext {
 
     /**
      * Informações sobre os players
-     * 
      */
     private Players players = new Players(); //< Lista de jogadores
 
@@ -69,7 +69,7 @@ public class GameContext {
         return this.roundType;
     }
 
-    public void setRoundType(Round round){
+    public void setRoundType(Round round) {
         this.roundType = round;
     }
 
@@ -97,7 +97,7 @@ public class GameContext {
         this.winner = winner;
     }
 
-    public Player getWinner(){
+    public Player getWinner() {
         return this.winner;
     }
 
@@ -139,12 +139,14 @@ public class GameContext {
         this.revealedCardsLimit = revealedCardsLimit;
     }
 
-
-    public int getPlayerThatAskedCambio() {
-        return playerThatAskedCambio;
-    }
-
-    public void setPlayerThatAskedCambio(int playerThatAskedCambio) {
-        this.playerThatAskedCambio = playerThatAskedCambio;
+    public int getHintFromSuperCard(Card card) {
+        if (card.isSuper()) {
+            if (card.getValue() == 11) {
+                return 1;
+            } else if (card.getValue() >= 12) {
+                return 2;
+            }
+        }
+        return 0;
     }
 }

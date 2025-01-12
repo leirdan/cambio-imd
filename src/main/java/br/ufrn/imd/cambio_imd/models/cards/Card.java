@@ -65,7 +65,8 @@ public class Card {
      */
     public boolean isSuper() {
         var key = data.getKey();
-        return key.equals("J") || key.equals("Q") || key.equals("K");
+        return key.equals("Jack") || key.equals("Queen") || key.equals("King");
+
     }
 
     @Override

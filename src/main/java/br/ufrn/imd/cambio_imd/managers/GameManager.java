@@ -17,17 +17,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-/**
- *
- */
 public class GameManager {
     private GameContext context = GameContext.getInstance();
     private static GameManager instance;
+
+    // Observers
     private Set<IGameAnimationObserver> animationObservers = new HashSet<>();
     private Set<IGameStateObserver> stateObservers = new HashSet<>();
 
-    private GameManager() {
-    }
+    // Singleton pattern
+    private GameManager() {}
 
     public static GameManager getInstance() {
         if (instance == null)
@@ -36,13 +35,16 @@ public class GameManager {
         return instance;
     }
 
+    /* --- Métodos de controle do jogo --- */
 
+    // Inicia o jogo, configurando e distribuindo cartas
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
                     "Certifique-se de chamar todos os métodos de setup antes deste.");
         }
 
+        // Executa comandos de setup
         new DealCardsCommand().execute();
         new CreatePlayersCommand().execute();
         new GiveCardsToPlayersCommand().execute();
@@ -128,6 +130,9 @@ public class GameManager {
                 new PlayerDrawCardFromPileCommand(player, drawPile).execute();
                 notifyCardDrawn();
             }
+            if (getTopCardOnDiscardPile().isSuper()) {
+                notifySuperCardDetected();
+            }
             advanceTurn();
         }
     }
@@ -162,6 +167,18 @@ public class GameManager {
         notifyChangeTurn();
     }
 
+    // Solicita cambio
+    public void askForCambio(){
+        new AskForCambioCommand(context.getCurrentPlayer().getId()).execute();
+    }
+
+    // Verifica se alguém ganhou
+    public void verifyWin(){
+        new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
+    }
+
+    /* --- Métodos de consulta de informações --- */
+
     public Stack<Card> getCurrentPlayerCards() {
         Player p = context.getCurrentPlayer();
         return p.getHand().getCards();
@@ -175,7 +192,11 @@ public class GameManager {
         return context.getCurrentPlayer().getName();
     }
 
-    /* Métodos que executam os observadores */
+    public Player getWinner(){
+        return context.getWinner();
+    }
+
+    /* --- Métodos de notificação para os observadores --- */
 
     private void notifyCardDrawn() {
         for (var observer : animationObservers) {
@@ -190,6 +211,7 @@ public class GameManager {
     }
 
     private void notifyStartGame() {
+        System.out.println("Entrou em notify");
         for (var observer : stateObservers) {
             observer.onStart();
         }
@@ -206,6 +228,26 @@ public class GameManager {
             observer.onChangeTurn();
         }
     }
+
+    private void notifyCambioAsked(){
+        for (var observer : stateObservers) {
+            observer.onCambioAsked();
+        }
+    }
+
+    private void notifyWinner(){
+        for (var observer : stateObservers) {
+            observer.onWinner(context.getWinner().getId());
+        }
+    }
+
+    private void notifySuperCardDetected(){
+        for (var observer : stateObservers) {
+            observer.onSuperCardDetected(context.getHintFromSuperCard(getTopCardOnDiscardPile()));
+        }
+    }
+
+    /* --- Métodos de gerenciamento de observadores --- */
 
     public void addAnimationObserver(IGameAnimationObserver observer) {
         this.animationObservers.add(observer);

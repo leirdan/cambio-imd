@@ -4,4 +4,7 @@ public interface IGameStateObserver {
     void onStart();
     void onAction(String message);
     void onChangeTurn();
+    void onSuperCardDetected(int hintsNumber); //< Registrar 
+    void onCambioAsked();
+    void onWinner(int playerId);
 }

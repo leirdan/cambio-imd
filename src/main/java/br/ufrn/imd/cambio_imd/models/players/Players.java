@@ -32,4 +32,8 @@ public class Players {
                 .filter(player -> player.getId() == id)
                 .findFirst();
     }
+
+    public int size() {
+        return data.size();
+    }
 }

@@ -149,4 +149,12 @@ public class GameContext {
         }
         return 0;
     }
+
+    public int getPlayerThatAskedCambio() {
+        return playerThatAskedCambio;
+    }
+
+    public void setPlayerThatAskedCambio(int playerThatAskedCambio) {
+        this.playerThatAskedCambio = playerThatAskedCambio;
+    }
 }

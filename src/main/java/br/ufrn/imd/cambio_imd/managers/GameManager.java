@@ -31,13 +31,11 @@ public class GameManager {
     public static GameManager getInstance() {
         if (instance == null)
             instance = new GameManager();
-
         return instance;
     }
 
-    /* --- Métodos de controle do jogo --- */
+    /* --- Métodos de inicialização do jogo --- */
 
-    // Inicia o jogo, configurando e distribuindo cartas
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
@@ -59,19 +57,48 @@ public class GameManager {
         new SetGameModeCommand(event).execute();
     }
 
-    public boolean isCurrentPlayerHuman() {
-        return context.getCurrentPlayer().isHuman();
+    /* --- Métodos de controle de turnos e rodadas --- */
+
+    private void advanceTurn() {
+        int index = context.getCurrentPlayerIndex();
+        int playerCount = context.getPlayers().getData().size();
+
+        index = (index + 1) % playerCount;
+        context.setCurrentPlayerIndex(index);
+
+        boolean hasCompletedRound = index == context.getFirstPlayerIndex();
+
+        if (context.getRoundType() == Round.CUT) {
+            if (hasCompletedRound) {
+                int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
+                context.setFirstPlayerIndex(nextFirstPlayerIndex);
+                context.setRoundType(Round.NORMAL);
+                notifyAction("Rodada normal! ");
+            }
+        } else if (context.getRoundType() == Round.NORMAL) {
+            resetPlayersRestrictions();
+            context.setRoundType(Round.CUT);
+            notifyAction("Rodada de cortes! ");
+        }
+
+        notifyChangeTurn();
     }
-    public boolean isCurrentRoundNormal() {
-        return context.getRoundType() == Round.NORMAL;
+
+    public void resetPlayersRestrictions() {
+        context.getPlayers().getData().forEach(player -> {
+            player.setProhibitedCut(false);
+            player.setWrongCut(false);
+        });
+    }
+
+    public void skipTurn() {
+        notifyAction(getCurrentPlayerName() + " passou a vez!");
+        advanceTurn();
     }
 
     public void handleBotAction(int percentage) {
-        if (isCurrentPlayerHuman()) {
-            return;
-        }
+        if (isCurrentPlayerHuman()) return;
 
-        // TODO: melhorar essa IA aqui viu
         if (percentage <= 15) {
             callCambio();
         } else if (percentage > 15 && percentage <= 80) {
@@ -83,14 +110,7 @@ public class GameManager {
         }
     }
 
-    public void skipTurn() {
-        notifyAction(getCurrentPlayerName() + " passou a vez!");
-        advanceTurn();
-    }
-
-    // TODO: implementar ação de pediu câmbio!
     public void callCambio() {
-        // lógico de pedir cambio
         notifyAction(getCurrentPlayerName() + " pediu câmbio!");
         advanceTurn();
     }
@@ -101,11 +121,6 @@ public class GameManager {
         DrawPile drawPile = context.getDrawPile();
         DiscardPile discardPile = context.getDiscardPile();
 
-        // FIXME: atualmente, quando o jogador está bloqueado ele não é pulado automaticamente.
-        // Ele precisa jogar a carta para receber a notícia. O legal é que fosse
-        // Pulado automaticamente
-        // pra isso, deve mexer no advanceTurn...
-
         if (context.getRoundType() == Round.CUT && player.isProhibitedCut()) {
             notifyAction(player.getName() + " está proibido de cortar!");
             advanceTurn();
@@ -114,9 +129,6 @@ public class GameManager {
             notifyAction(player.getName() + " jogou " + cardStr);
             notifyCardDiscarded();
 
-            // Se for rodada de corte, verifica se o corte foi bem-sucedido.
-            // Se não foi, puxa uma carta. Se foi, não precisa puxar.
-            // Se não for rodada de corte, puxa normalmente.
             if (context.getRoundType() == Round.CUT) {
                 new CheckCutCommand(player, discardPile).execute();
                 if (player.isProhibitedCut() || player.madeWrongCut()) {
@@ -137,47 +149,23 @@ public class GameManager {
         }
     }
 
-    /**
-     * Avança para o próximo jogador da lista, notificando
-     * automaticamente a mudança de turno a todos os observadores.
-     */
-    private void advanceTurn() {
-        int index = context.getCurrentPlayerIndex();
-        int playerCount = context.getPlayers().getData().size();
-
-        index = (index + 1) % playerCount;
-        context.setCurrentPlayerIndex(index);
-
-        boolean hasCompletedRound = index == context.getFirstPlayerIndex();
-
-        // O round só deve ser normal quando for a vez do primeiro
-        // jogador da rodada, depois está aberto pra cortes.
-        if (context.getRoundType() == Round.CUT) {
-            if (hasCompletedRound) {
-                int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
-                context.setFirstPlayerIndex(nextFirstPlayerIndex);
-                context.setRoundType(Round.NORMAL);
-                notifyAction("Rodada normal! ");
-            }
-        } else if (context.getRoundType() == Round.NORMAL) {
-            context.setRoundType(Round.CUT);
-            notifyAction("Rodada de cortes! ");
-        }
-
-        notifyChangeTurn();
+    public void askForCambio() {
+        new AskForCambioCommand().execute();
     }
 
-    // Solicita cambio
-    public void askForCambio(){
-        new AskForCambioCommand(context.getCurrentPlayer().getId()).execute();
-    }
-
-    // Verifica se alguém ganhou
-    public void verifyWin(){
-        new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
+    public void setWinner() {
+        new SetWinnerCommand(context.getRoundType() == Round.CUT).execute();
     }
 
     /* --- Métodos de consulta de informações --- */
+
+    public boolean isCurrentPlayerHuman() {
+        return context.getCurrentPlayer().isHuman();
+    }
+
+    public boolean isCurrentRoundNormal() {
+        return context.getRoundType() == Round.NORMAL;
+    }
 
     public Stack<Card> getCurrentPlayerCards() {
         Player p = context.getCurrentPlayer();
@@ -192,7 +180,7 @@ public class GameManager {
         return context.getCurrentPlayer().getName();
     }
 
-    public Player getWinner(){
+    public Player getWinner() {
         return context.getWinner();
     }
 
@@ -211,7 +199,6 @@ public class GameManager {
     }
 
     private void notifyStartGame() {
-        System.out.println("Entrou em notify");
         for (var observer : stateObservers) {
             observer.onStart();
         }
@@ -229,19 +216,19 @@ public class GameManager {
         }
     }
 
-    private void notifyCambioAsked(){
+    private void notifyCambioAsked() {
         for (var observer : stateObservers) {
             observer.onCambioAsked();
         }
     }
 
-    private void notifyWinner(){
+    private void notifyWinner() {
         for (var observer : stateObservers) {
             observer.onWinner(context.getWinner().getId());
         }
     }
 
-    private void notifySuperCardDetected(){
+    private void notifySuperCardDetected() {
         for (var observer : stateObservers) {
             observer.onSuperCardDetected(context.getHintFromSuperCard(getTopCardOnDiscardPile()));
         }

@@ -32,25 +32,15 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
+<AnchorPane prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
     <children>
         <Pane fx:id="pilesPane" layoutX="274.0" layoutY="30.0" prefHeight="288.0" prefWidth="506.0">
             <children>
-                <ImageView fx:id="discardPileImage" fitHeight="225.0" fitWidth="149.0" layoutX="175.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/img/cards/redBack.png" />
-               </image></ImageView>
                 <ImageView fx:id="drawPileImage" fitHeight="120.0" fitWidth="79.0" layoutX="359.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@assets/img/cards/redBack.png" />
@@ -117,8 +107,9 @@
                   </ImageView>
                </children>
                 </GridPane>
-                <TextArea fx:id="messageBox" editable="false" layoutX="581.0" layoutY="10.0" prefHeight="191.0" prefWidth="212.0" />
-            <Button layoutX="458.0" layoutY="75.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pedir câmbio" />
+                <TextArea fx:id="historyTextArea" editable="false" layoutX="581.0" layoutY="10.0" prefHeight="191.0" prefWidth="212.0" />
+            <Button layoutX="458.0" layoutY="123.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pedir câmbio" fx:id="cambioBtn" />
+            <Button layoutX="458.0" layoutY="51.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pular vez" fx:id="skipBtn" />
             </children>
         </Pane>
     </children>

@@ -1,7 +1,6 @@
 package br.ufrn.imd.cambio_imd.dao;
 
 import br.ufrn.imd.cambio_imd.enums.Round;
-import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
@@ -16,16 +15,20 @@ public class GameContext {
      */
     private Players players = new Players(); //< Lista de jogadores
 
-    // Jogadas a serem realizdas
     private int currentPlayerIndex = 0; //< Atual jogador na ordem cronológica original do jogo (Acesso de avanço de ordem de jogo, por isso um inteiro)
-    private Player currentPlayerToCut = null; //< Atual jogador a fazer o seu corte, fora da ordem cronológica (Acesso direto, sem ordem, por isso um objeto)
-    private int lastPlayerToPlayId = 0; //< Último jogador a realizar uma jogada, seja ela de corte, seja ela de descarte padrão.
-    private int playerToAskCambio = -1;
-    // Resultado de jogo
+    private int firstPlayerIndex = 0; //< O primeiro jogador que jogou na rodada
+    private int playerThatAskedCambio = -1;
     private Player winner = null; //< Jogador vencedor
-
     private Round roundType = Round.CUT;
 
+
+    public int getFirstPlayerIndex() {
+        return firstPlayerIndex;
+    }
+
+    public void setFirstPlayerIndex(int newFirstPlayerIndex) {
+        this.firstPlayerIndex = newFirstPlayerIndex;
+    }
 
     /**
      * Informações sobre as cartas
@@ -62,6 +65,14 @@ public class GameContext {
         this.players = players;
     }
 
+    public Round getRoundType() {
+        return this.roundType;
+    }
+
+    public void setRoundType(Round round){
+        this.roundType = round;
+    }
+
     public Player getCurrentPlayer() {
         if (players.getData() == null || players.getData().isEmpty())
             throw new UnitializedGameException("Players were not set!");
@@ -74,28 +85,12 @@ public class GameContext {
         return playersArray[currentPlayerIndex];
     }
 
-    public Player getCurrentPlayerToCut() {
-        return currentPlayerToCut;
-    }
-
-    public void setCurrentPlayerToCut(Player currentPlayerToCut) {
-        this.currentPlayerToCut = currentPlayerToCut;
-    }
-
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
 
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public int getLastPlayerToPlayId() {
-        return lastPlayerToPlayId;
-    }
-
-    public void setLastPlayerToPlayId(int lastPlayerToPlayId) {
-        this.lastPlayerToPlayId = lastPlayerToPlayId;
     }
 
     public void setWinner(Player winner) {
@@ -144,22 +139,12 @@ public class GameContext {
         this.revealedCardsLimit = revealedCardsLimit;
     }
 
-    public int getPlayerToAskCambio() {
-        return playerToAskCambio;
+
+    public int getPlayerThatAskedCambio() {
+        return playerThatAskedCambio;
     }
 
-    public void setPlayerToAskCambio(int playerToAskCambio) {
-        this.playerToAskCambio = playerToAskCambio;
-    }
-
-    public int getHintFromSuperCard(Card card){
-        if(card.isSuper()){
-            if(card.getValue() == 11){
-                return 1;
-            } else if (card.getValue() >= 12){
-                return 2;
-            }
-        }
-        return 0;
+    public void setPlayerThatAskedCambio(int playerThatAskedCambio) {
+        this.playerThatAskedCambio = playerThatAskedCambio;
     }
 }

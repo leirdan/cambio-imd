@@ -7,12 +7,15 @@ import java.util.LinkedHashSet;
 public class VerifyWinnerCommand implements ICommand {
     private int currentPlayerIndex = 0;
 
-    public VerifyWinnerCommand( int currentPlayerIndex){
+    public VerifyWinnerCommand(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
     }
 
     @Override
-    public void execute(){
+    public void execute() {
+
+    }
+        /*
         VerifyWinner();
         if(verifyIfCambioStarted()){
             verifyCambio();
@@ -20,6 +23,7 @@ public class VerifyWinnerCommand implements ICommand {
     }
 
     private void VerifyWinner(){
+
         GameContext context = GameContext.getInstance();
         LinkedHashSet<Player>playersList = context.getPlayers().getData();
 
@@ -31,9 +35,12 @@ public class VerifyWinnerCommand implements ICommand {
         }
     }
 
+         */
+
     /*
      * Se eu não tiver a ordem da partida não consigo aplicar o câmbio
      */
+    /*
     private void verifyCambio(){
         GameContext context = GameContext.getInstance();
         LinkedHashSet<Player>playersList = context.getPlayers().getData();
@@ -63,5 +70,6 @@ public class VerifyWinnerCommand implements ICommand {
         return currentPlayerIndex == context.getPlayerToAskCambio();
     }
 
-}
 
+     */
+}

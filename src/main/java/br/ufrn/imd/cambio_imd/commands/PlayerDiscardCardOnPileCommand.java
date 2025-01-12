@@ -23,7 +23,7 @@ public class PlayerDiscardCardOnPileCommand implements ICommand {
         // Inserir na pilha de descarte
         pile.addCard(selectedCard);
         
-        GameContext context = GameContext.getInstance();
-        context.setLastPlayerToPlayId(player.getId());
+        // GameContext context = GameContext.getInstance();
+        // context.setLastPlayerToPlayId(player.getId());
     }
 }

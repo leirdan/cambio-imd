@@ -6,9 +6,12 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
+import br.ufrn.imd.cambio_imd.utility.RandomGenerator;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -24,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -39,6 +43,7 @@ public class GameController extends ControllerBase {
     @FXML
     private GridPane playerHandGridPane;
 
+
     @FXML
     private Pane pilesPane;
 
@@ -49,7 +54,13 @@ public class GameController extends ControllerBase {
     private ImageView drawPileImage;
 
     @FXML
-    private TextArea messageBox;
+    private TextArea historyTextArea;
+
+    @FXML
+    private Button skipBtn;
+
+    @FXML
+    private Button cambioBtn;
 
     private final Button playBtn = new Button();
     private final Button showBtn = new Button();
@@ -117,6 +128,8 @@ public class GameController extends ControllerBase {
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
         playBtn.setMinWidth(50);
+        skipBtn.setOnMouseClicked(click -> handleSkipBtnClick());
+        cambioBtn.setOnMouseClicked(click -> handleCambioBtnClick());
         showBtn.setText("Ver");
         showBtn.setOnMouseClicked(click -> handleShowBtnClick());
         showBtn.setMinWidth(50);
@@ -145,16 +158,59 @@ public class GameController extends ControllerBase {
                     playerHandGridPane.getChildren().remove(optionsBox);
                 });
             }
-        });        
+        });
     }
 
     public void render() {
         try {
             renderHistory();
+            renderDiscardPile();
             renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    @FXML
+    private void handleCambioBtnClick() {
+        System.out.println("CAMBIOOOO");
+    }
+
+    /**
+     *
+     */
+    private void handleBotTurn() {
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.seconds(1 + RandomGenerator.getInt(3, 6)),
+                event -> {
+                    int percentage = RandomGenerator.getInt(100);
+                    gameManager.handleBotAction(percentage);
+                }
+        ));
+        timeline.setCycleCount(1);
+        timeline.play();
+    }
+
+    private void enablePlayerControls() {
+        playBtn.setDisable(false);
+        swapBtn.setDisable(false);
+        optionsBox.setDisable(false);
+        cambioBtn.setDisable(false);
+
+        skipBtn.setDisable(gameManager.isCurrentRoundNormal());
+    }
+
+    private void disablePlayerControls() {
+        playBtn.setDisable(true);
+        swapBtn.setDisable(true);
+        optionsBox.setDisable(true);
+        cambioBtn.setDisable(true);
+        skipBtn.setDisable(true);
+    }
+
+    @FXML
+    private void handleSkipBtnClick() {
+        gameManager.skipTurn();
     }
 
     private void renderPlayerInfo() {
@@ -220,14 +276,13 @@ public class GameController extends ControllerBase {
     }
 
     protected void handlePlayBtnClick() {
-        System.out.println("Helloooo play");
         gameManager.playCard(uiManager.getClickedCard());
     }
 
     @FXML
     protected void handleShowBtnClick() {
         int cardIndex = uiManager.getClickedCard();
-        
+
         ImageView cardImageView = (ImageView) playerHandGridPane.getChildren().get(cardIndex);
 
         var card = gameManager.getCurrentPlayerCards().get(cardIndex);
@@ -246,9 +301,9 @@ public class GameController extends ControllerBase {
     }
 
     protected void renderHistory() {
-        messageBox.clear();
+        historyTextArea.clear();
         for (var message : uiManager.getHistory()) {
-            messageBox.appendText(message);
+            historyTextArea.appendText(message);
         }
     }
 
@@ -260,23 +315,28 @@ public class GameController extends ControllerBase {
         var cardNode = playerHandGridPane.getChildren().get(uiManager.getClickedCard());
 
         applyTransition(cardNode, Duration.millis(500), TransitionType.FADE_OUT, () -> {
-            pilesPane.getChildren().remove(discardPileImage);
             playerHandGridPane.getChildren().remove(cardNode);
             renderPlayerHand();
-
-            Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
-
-            ImageView discardImageView = new ImageView(cardImage);
-            discardImageView.setFitWidth(uiManager.getCardWidth());
-            discardImageView.setFitHeight(uiManager.getCardHeight());
-            discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
-            discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
-
-            applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
-
-            pilesPane.getChildren().add(discardImageView);
+            renderDiscardPile();
         });
 
+    }
+
+    private void renderDiscardPile() {
+        if (discardPileImage != null)
+            pilesPane.getChildren().remove(discardPileImage);
+
+        Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
+
+        ImageView discardImageView = new ImageView(cardImage);
+        discardImageView.setFitWidth(uiManager.getCardWidth());
+        discardImageView.setFitHeight(uiManager.getCardHeight());
+        discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
+        discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
+
+        applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
+
+        pilesPane.getChildren().add(discardImageView);
     }
 
     private void animateCardDrawn() {
@@ -332,22 +392,22 @@ public class GameController extends ControllerBase {
         }
         transition.play();
     }
-    
+
     private void animateCardFlip(ImageView cardImageView, Image frontImage, Image backImage) {
         // Etapa 1: Achatar a carta (escalando horizontalmente para zero)
         ScaleTransition scaleOut = new ScaleTransition(Duration.millis(300), cardImageView);
         scaleOut.setFromX(1.0);
         scaleOut.setToX(0.0); // Achatar horizontalmente
-    
+
         // Etapa 2: Alterar a imagem da carta no meio do flip
         scaleOut.setOnFinished(event -> {
             cardImageView.setImage(frontImage); // Troca para frente
-            
+
             // Etapa 3: Expandir novamente a carta (restaurar escala horizontal)
             ScaleTransition scaleIn = new ScaleTransition(Duration.millis(300), cardImageView);
             scaleIn.setFromX(0.0);
             scaleIn.setToX(1.0); // Restaurar a largura
-    
+
             scaleIn.setOnFinished(e -> {
                 // Etapa 4: Pausar por 1.7 segundos antes de virar de volta
                 PauseTransition pause = new PauseTransition(Duration.seconds(1.7));
@@ -356,27 +416,27 @@ public class GameController extends ControllerBase {
                     ScaleTransition scaleOutBack = new ScaleTransition(Duration.millis(300), cardImageView);
                     scaleOutBack.setFromX(1.0);
                     scaleOutBack.setToX(0.0);
-    
+
                     scaleOutBack.setOnFinished(ev -> {
                         cardImageView.setImage(backImage); // Retorna ao verso da carta
-    
+
                         ScaleTransition scaleInBack = new ScaleTransition(Duration.millis(300), cardImageView);
                         scaleInBack.setFromX(0.0);
                         scaleInBack.setToX(1.0);
                         scaleInBack.play(); // Expande de volta ao estado original
                     });
-    
+
                     scaleOutBack.play(); // Achatar novamente para virar de volta
                 });
-    
+
                 pause.play(); // Executa a pausa de 1.7 segundos
             });
-    
+
             scaleIn.play(); // Executa a expansão inicial
         });
-    
+
         scaleOut.play(); // Inicia a animação de virada
     }
 
-    
+
 }

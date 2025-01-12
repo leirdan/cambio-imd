@@ -17,7 +17,7 @@ public class GameContext {
 
     private int currentPlayerIndex = 0; //< Atual jogador na ordem cronológica original do jogo (Acesso de avanço de ordem de jogo, por isso um inteiro)
     private int firstPlayerIndex = 0; //< O primeiro jogador que jogou na rodada
-    private int playerThatAskedCambio = -1;
+    private int playerThatAskedCambioIndex = -1;
     private Player winner = null; //< Jogador vencedor
     private Round roundType = Round.CUT;
 
@@ -148,5 +148,22 @@ public class GameContext {
             }
         }
         return 0;
+    }
+
+    public boolean hasAnyPlayerWithoutCards() {
+        for (var p : players.getData()) {
+            if (p.getHand().isEmpty())
+                return true;
+        }
+
+        return false;
+    }
+
+    public int getPlayerThatAskedCambioIndex() {
+        return playerThatAskedCambioIndex;
+    }
+
+    public void setPlayerThatAskedCambioIndex(int playerThatAskedCambioIndex) {
+        this.playerThatAskedCambioIndex = playerThatAskedCambioIndex;
     }
 }

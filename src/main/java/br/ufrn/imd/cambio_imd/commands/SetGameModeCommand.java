@@ -22,8 +22,8 @@ public class SetGameModeCommand implements ICommand {
                 case "sixCardsBtn":
                     gm.setCardsPerHandLimit(6);
                     gm.setRevealedCardsLimit(1);
-                    gim.setCardWidth(100);
-                    gim.setCardHeight(150);
+                    gim.setCardWidth(70);
+                    gim.setCardHeight(90);
                     break;
 
                 case "twelveCardsBtn":
@@ -37,8 +37,8 @@ public class SetGameModeCommand implements ICommand {
                 default:
                     gm.setCardsPerHandLimit(8);
                     gm.setRevealedCardsLimit(2);
-                    gim.setCardWidth(80);
-                    gim.setCardHeight(120);
+                    gim.setCardWidth(70);
+                    gim.setCardHeight(90);
                     break;
             }
         }

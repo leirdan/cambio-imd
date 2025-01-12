@@ -26,7 +26,8 @@ public class GameManager {
     private Set<IGameStateObserver> stateObservers = new HashSet<>();
 
     // Singleton pattern
-    private GameManager() {}
+    private GameManager() {
+    }
 
     public static GameManager getInstance() {
         if (instance == null)
@@ -72,15 +73,25 @@ public class GameManager {
             return;
         }
 
-        // TODO: melhorar essa IA aqui viu
-        if (percentage <= 15) {
+        Player bot = context.getCurrentPlayer();
+        boolean canSkip = false;
+        boolean canCallCambio = false;
+
+        if (bot.getHand().getCards().size() < 5) {
+            canCallCambio = true;
+        }
+        if (!isCurrentRoundNormal()) {
+            canSkip = true;
+        }
+
+        if (percentage <= 10 && canCallCambio) {
             callCambio();
-        } else if (percentage > 15 && percentage <= 80) {
+        } else if (percentage > 80 && percentage < 100 && canSkip) {
+            skipTurn();
+        } else {
             int limit = getCurrentPlayerCards().size();
             int cardIndex = RandomGenerator.getInt(limit);
             playCard(cardIndex);
-        } else {
-            skipTurn();
         }
     }
 
@@ -89,9 +100,8 @@ public class GameManager {
         advanceTurn();
     }
 
-    // TODO: implementar ação de pediu câmbio!
     public void callCambio() {
-        // lógico de pedir cambio
+//        new AskForCambioCommand().execute();
         notifyAction(getCurrentPlayerName() + " pediu câmbio!");
         advanceTurn();
     }
@@ -150,36 +160,36 @@ public class GameManager {
         int index = context.getCurrentPlayerIndex();
         int playerCount = context.getPlayers().getData().size();
 
-        index = (index + 1) % playerCount;
-        context.setCurrentPlayerIndex(index);
+        // Se o próximo jogador foi o primeiro da sequência, completou a rodada
+        boolean hasCompletedRound = index + 1 == context.getFirstPlayerIndex();
 
-        boolean hasCompletedRound = index == context.getFirstPlayerIndex();
-
+        boolean hasAnyPlayerWithoutCards = context.hasAnyPlayerWithoutCards();
         // O round só deve ser normal quando for a vez do primeiro
         // jogador da rodada, depois está aberto pra cortes.
         if (context.getRoundType() == Round.CUT) {
-            if (hasCompletedRound) {
-                int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
-                context.setFirstPlayerIndex(nextFirstPlayerIndex);
-                context.setRoundType(Round.NORMAL);
-                notifyAction("Rodada normal! ");
+            boolean hasPlayerThatAskedCambio = context.getPlayerThatAskedCambioIndex() != -1;
+
+            if (hasAnyPlayerWithoutCards || (hasPlayerThatAskedCambio && index == context.getPlayerThatAskedCambioIndex())) {
+                // TODO: implementar o ganhador
+                // new SetWinnerCommand().execute();
+            } else {
+                if (hasCompletedRound) {
+                    int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
+                    context.setFirstPlayerIndex(nextFirstPlayerIndex);
+                    context.setRoundType(Round.NORMAL);
+                    notifyAction("Rodada normal! ");
+                }
             }
         } else if (context.getRoundType() == Round.NORMAL) {
-            context.setRoundType(Round.CUT);
+            if (hasAnyPlayerWithoutCards)
+                // new SetWinnerCommand().execute();
+                context.setRoundType(Round.CUT);
             notifyAction("Rodada de cortes! ");
         }
 
+        index = (index + 1) % playerCount;
+        context.setCurrentPlayerIndex(index);
         notifyChangeTurn();
-    }
-
-    // Solicita cambio
-    public void askForCambio(){
-        new AskForCambioCommand(context.getCurrentPlayer().getId()).execute();
-    }
-
-    // Verifica se alguém ganhou
-    public void verifyWin(){
-        new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
     }
 
     /* --- Métodos de consulta de informações --- */
@@ -197,7 +207,7 @@ public class GameManager {
         return context.getCurrentPlayer().getName();
     }
 
-    public Player getWinner(){
+    public Player getWinner() {
         return context.getWinner();
     }
 
@@ -228,24 +238,29 @@ public class GameManager {
     }
 
     private void notifyChangeTurn() {
-        for (var observer : stateObservers) {
-            observer.onChangeTurn();
+        boolean hasWinner = context.getWinner() != null;
+        if (hasWinner) {
+            notifyWinner();
+        } else {
+            for (var observer : stateObservers) {
+                observer.onChangeTurn();
+            }
         }
     }
 
-    private void notifyCambioAsked(){
+    private void notifyCambioAsked() {
         for (var observer : stateObservers) {
             observer.onCambioAsked();
         }
     }
 
-    private void notifyWinner(){
+    private void notifyWinner() {
         for (var observer : stateObservers) {
             observer.onWinner(context.getWinner().getId());
         }
     }
 
-    private void notifySuperCardDetected(){
+    private void notifySuperCardDetected() {
         for (var observer : stateObservers) {
             observer.onSuperCardDetected(context.getHintFromSuperCard(getTopCardOnDiscardPile()));
         }

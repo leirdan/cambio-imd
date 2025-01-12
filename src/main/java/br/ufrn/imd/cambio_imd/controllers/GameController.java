@@ -174,7 +174,7 @@ public class GameController extends ControllerBase {
 
     @FXML
     private void handleCambioBtnClick() {
-        System.out.println("CAMBIOOOO");
+        gameManager.callCambio();
     }
 
     private void renderDrawPileCount() {
@@ -229,7 +229,7 @@ public class GameController extends ControllerBase {
     }
 
     private void renderPlayerInfo() {
-        playerTextField.setText(gameManager.getCurrentPlayerName());
+        playerTextField.setText("Vez de: " + gameManager.getCurrentPlayerName());
         renderPlayerHand();
     }
 
@@ -353,14 +353,34 @@ public class GameController extends ControllerBase {
         pilesPane.getChildren().add(discardImageView);
     }
 
+
     private void animateCardDrawn() {
+        /*
         var drawCardImage = drawPileImage;
 
         applyTransition(drawPileImage, Duration.millis(500), TransitionType.FADE_OUT, () -> {
             playerHandGridPane.getChildren().add(drawCardImage);
             renderPlayerHand();
-            drawCardImage.setOpacity(1);
+            applyTransition(drawPileImage, Duration.millis(200), TransitionType.FADE_IN);
         });
+         */
+        // Cria uma cópia da imagem da pilha de compra
+        ImageView drawCardImage = new ImageView(drawPileImage.getImage());
+
+        // Adiciona a cópia ao mesmo container da pilha de compra (para manter a animação no mesmo local)
+        ((Pane) drawPileImage.getParent()).getChildren().add(drawCardImage);
+
+        // Animação de retirada da pilha de compra
+        applyTransition(drawCardImage, Duration.millis(500), TransitionType.FADE_OUT, () -> {
+            // Adiciona a carta à mão do jogador após a animação
+            playerHandGridPane.getChildren().add(drawCardImage);
+            renderPlayerHand();
+
+            // Remove a cópia do local original e faz a transição de entrada
+            ((Pane) drawPileImage.getParent()).getChildren().remove(drawCardImage);
+            applyTransition(drawCardImage, Duration.millis(500), TransitionType.FADE_IN);
+        });
+
     }
 
     /**

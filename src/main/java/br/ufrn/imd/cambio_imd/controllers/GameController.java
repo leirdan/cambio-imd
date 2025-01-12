@@ -69,61 +69,6 @@ public class GameController extends ControllerBase {
 
     @FXML
     protected void initialize() {
-        // FIXME: documentar bem essa inicialização
-        // Registrando observadores por classes anônimas
-        gameManager.addAnimationObserver(new IGameAnimationObserver() {
-            @Override
-            public void onCardDrawn() {
-                animateCardDrawn();
-            }
-
-            @Override
-            public void onCardDiscarded() {
-                animateCardDiscarded();
-            }
-        });
-
-        gameManager.addStateObserver(new IGameStateObserver() {
-            @Override
-            public void onStart() {
-                render();
-            }
-
-            @Override
-            public void onAction(String message) {
-                uiManager.addMessageOnHistory(message);
-                renderHistory();
-            }
-
-            @Override
-            public void onChangeTurn() {
-                render();
-            }
-
-            @Override
-            public void onSuperCardDetected(int hintsNumber){
-                uiManager.addMessageOnHistory("Você pode ver " + hintsNumber + " cartas!");
-                renderHistory();
-                uiManager.setRemainingHints(hintsNumber);
-                if (optionsBox != null && !optionsBox.getChildren().contains(showBtn)) {
-                    optionsBox.getChildren().add(showBtn);
-                }
-            }
-
-            @Override
-            public void onCambioAsked() {
-                uiManager.addMessageOnHistory("O jogador " + gameManager.getCurrentPlayerName() + " pediu um câmbio!");
-                renderHistory();
-                // Disso assumimos que, ao pedir um câmbio, o jogador ainda está dentro de sua rodada e isso não terpa
-                // conflitos caso um novo jogador assumisse logo após ele pedir câmbio
-            }
-
-            @Override
-            public void onWinner(int playerId) {
-                uiManager.addMessageOnHistory("O jogador " + gameManager.getWinner().getName() + " venceu!");
-                renderHistory();
-            }
-        });
 
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
@@ -161,6 +106,74 @@ public class GameController extends ControllerBase {
         });
     }
 
+    protected void initObservers() {
+        gameManager.addAnimationObserver(new IGameAnimationObserver() {
+            @Override
+            public void onCardDrawn() {
+                animateCardDrawn();
+            }
+
+            @Override
+            public void onCardDiscarded() {
+                animateCardDiscarded();
+            }
+        });
+
+        gameManager.addStateObserver(new IGameStateObserver() {
+            @Override
+            public void onStart() {
+                render();
+                startTurn();
+            }
+
+            @Override
+            public void onAction(String message) {
+                uiManager.addMessageOnHistory(message);
+                renderHistory();
+            }
+
+            @Override
+            public void onChangeTurn() {
+                render();
+                startTurn();
+            }
+
+            @Override
+            public void onSuperCardDetected(int hintsNumber) {
+                uiManager.addMessageOnHistory("Você pode ver " + hintsNumber + " cartas!");
+                renderHistory();
+                uiManager.setRemainingHints(hintsNumber);
+                if (optionsBox != null && !optionsBox.getChildren().contains(showBtn)) {
+                    optionsBox.getChildren().add(showBtn);
+                }
+            }
+
+            @Override
+            public void onCambioAsked() {
+                uiManager.addMessageOnHistory(gameManager.getCurrentPlayerName() + " pediu um câmbio!");
+                renderHistory();
+                // Disso assumimos que, ao pedir um câmbio, o jogador ainda está dentro de sua rodada e isso não terpa
+                // conflitos caso um novo jogador assumisse logo após ele pedir câmbio
+            }
+
+            @Override
+            public void onWinner(int playerId) {
+                uiManager.addMessageOnHistory("O " + gameManager.getWinner().getName() + " venceu!");
+                renderHistory();
+            }
+
+            private void startTurn() {
+                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
+                if (gameManager.isCurrentPlayerHuman()) {
+                    enablePlayerControls();
+                } else {
+                    disablePlayerControls();
+                    handleBotTurn();
+                }
+            }
+        });
+    }
+
     public void render() {
         try {
             renderHistory();
@@ -193,7 +206,6 @@ public class GameController extends ControllerBase {
 
     private void enablePlayerControls() {
         playBtn.setDisable(false);
-        swapBtn.setDisable(false);
         optionsBox.setDisable(false);
         cambioBtn.setDisable(false);
 
@@ -202,7 +214,6 @@ public class GameController extends ControllerBase {
 
     private void disablePlayerControls() {
         playBtn.setDisable(true);
-        swapBtn.setDisable(true);
         optionsBox.setDisable(true);
         cambioBtn.setDisable(true);
         skipBtn.setDisable(true);
@@ -308,7 +319,6 @@ public class GameController extends ControllerBase {
     }
 
     // Métodos de animação
-    // TODO: será que isso é responsabilidade desta classe?
 
     // FIXME: deixar este método mais claro
     private void animateCardDiscarded() {

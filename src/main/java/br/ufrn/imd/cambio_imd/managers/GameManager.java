@@ -94,20 +94,7 @@ public class GameManager {
         notifyAction(getCurrentPlayerName() + " pediu câmbio!");
         advanceTurn();
     }
-    // Executa a jogada de descarte de carta
-    public void playCard(int cardIndex) {
-        var player = context.getCurrentPlayer();
-        var drawPile = context.getDrawPile();
-        var discardPile = context.getDiscardPile();
 
-        new PlayerDiscardCardOnPileCommand(player, discardPile, cardIndex).execute();
-        notifyCardDiscarded();
-        new PlayerDrawCardFromPileCommand(player, drawPile).execute();
-        notifyCardDrawn();
-
-        if(getTopCardOnDiscardPile().isSuper()){
-            notifySuperCardDetected();
-        }
     public void playCard(int cardIndex) {
         Player player = context.getCurrentPlayer();
         String cardStr = getCurrentPlayerCards().get(cardIndex).toString();
@@ -142,6 +129,9 @@ public class GameManager {
             } else {
                 new PlayerDrawCardFromPileCommand(player, drawPile).execute();
                 notifyCardDrawn();
+            }
+            if (getTopCardOnDiscardPile().isSuper()) {
+                notifySuperCardDetected();
             }
             advanceTurn();
         }

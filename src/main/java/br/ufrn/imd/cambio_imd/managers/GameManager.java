@@ -32,13 +32,11 @@ public class GameManager {
     public static GameManager getInstance() {
         if (instance == null)
             instance = new GameManager();
-
         return instance;
     }
 
-    /* --- Métodos de controle do jogo --- */
+    /* --- Métodos de inicialização do jogo --- */
 
-    // Inicia o jogo, configurando e distribuindo cartas
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
@@ -60,18 +58,21 @@ public class GameManager {
         new SetGameModeCommand(event).execute();
     }
 
-    public boolean isCurrentPlayerHuman() {
+    /* --- Métodos de controle de turnos e rodadas --- */
+
+    public void resetPlayersRestrictions() {
+        context.getPlayers().getData().forEach(player -> {
+            player.setProhibitedCut(false);
+            player.setWrongCut(false);
+        });
+    }
+
+    public boolean isCurrentPlayerHuman(){
         return context.getCurrentPlayer().isHuman();
     }
 
-    public boolean isCurrentRoundNormal() {
-        return context.getRoundType() == Round.NORMAL;
-    }
-
     public void handleBotAction(int percentage) {
-        if (isCurrentPlayerHuman()) {
-            return;
-        }
+        if (isCurrentPlayerHuman()) return;
 
         Player bot = context.getCurrentPlayer();
         boolean canSkip = false;
@@ -192,7 +193,19 @@ public class GameManager {
         notifyChangeTurn();
     }
 
+    public void askForCambio() {
+        new AskForCambioCommand().execute();
+    }
+
+    public void setWinner() {
+        new SetWinnerCommand(context.getRoundType() == Round.CUT).execute();
+    }
+
     /* --- Métodos de consulta de informações --- */
+
+    public boolean isCurrentRoundNormal() {
+        return context.getRoundType() == Round.NORMAL;
+    }
 
     public Stack<Card> getCurrentPlayerCards() {
         Player p = context.getCurrentPlayer();

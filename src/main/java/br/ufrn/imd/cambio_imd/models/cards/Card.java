@@ -2,8 +2,6 @@ package br.ufrn.imd.cambio_imd.models.cards;
 
 import javafx.util.Pair;
 
-import java.util.Objects;
-
 public class Card {
     /**
      * Naipe da carta.
@@ -16,6 +14,7 @@ public class Card {
 
     /**
      * Construtor padrão da classe <code>Card</code>
+     *
      * @param key Um símbolo aceitável do baralho de cartas.
      *            <p> Os símbolos são
      *            <code> {Ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King }</code>
@@ -48,8 +47,14 @@ public class Card {
         this.data = new Pair<>(key, value);
     }
 
-    public String getSuit() { return this.suit;}
-    public String getKey() { return this.data.getKey();}
+    public String getSuit() {
+        return this.suit;
+    }
+
+    public String getKey() {
+        return this.data.getKey();
+    }
+
     public Integer getValue() {
         return this.data.getValue();
     }
@@ -65,14 +70,22 @@ public class Card {
 
     @Override
     public boolean equals(Object obj) {
-        // TODO: melhorar a conversão
-        var card = (Card) obj;
+        try {
+            if (obj.getClass() != this.getClass())
+                return false;
 
-        return Objects.equals(card.getValue(), this.getValue());
+            var card = (Card) obj;
+
+            return card.getValue().equals(this.getValue()) &&
+                    card.getKey().equals(this.getKey());
+        } catch (NullPointerException ex) {
+            System.out.println("Elemento passado não é um card.");
+            return false;
+        }
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return getKey() + " de " + getSuit();
     }
 }

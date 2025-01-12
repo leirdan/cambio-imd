@@ -20,10 +20,6 @@ public class Player extends Entity {
     //< De corte
     private boolean wrongCut = false;
     private boolean prohibitedCut = false;
-    
-    //< De jogo
-    private int cardIndex = -1;
-    private int hints = 0;
 
     public Player() {
         super();
@@ -87,14 +83,6 @@ public class Player extends Entity {
         this.prohibitedCut = prohibitedCut;
     }
 
-    public int getCardIndex() {
-        return cardIndex;
-    }
-
-    public void setCardIndex(int cardIndex) {
-        this.cardIndex = cardIndex;
-    }
-
     public boolean isWrongCut() {
         return wrongCut;
     }
@@ -110,13 +98,5 @@ public class Player extends Entity {
     public boolean isHuman(){
         return this.type == PlayerType.HUMAN;
     }
-
-    public int getHints(){
-        return hints;
-    }
-
-    public void setHints(int hints){
-        this.hints = hints;
-    }
-    
 }
+

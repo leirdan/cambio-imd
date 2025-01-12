@@ -41,10 +41,6 @@
     <children>
         <Pane fx:id="pilesPane" layoutX="274.0" layoutY="30.0" prefHeight="288.0" prefWidth="506.0">
             <children>
-                <ImageView fx:id="discardPileImage" fitHeight="225.0" fitWidth="149.0" layoutX="175.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/img/cards/redBack.png" />
-               </image></ImageView>
                 <ImageView fx:id="drawPileImage" fitHeight="120.0" fitWidth="79.0" layoutX="359.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@assets/img/cards/redBack.png" />

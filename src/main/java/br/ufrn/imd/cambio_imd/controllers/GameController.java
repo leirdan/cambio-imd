@@ -75,7 +75,6 @@ public class GameController extends ControllerBase {
         gameManager.addStateObserver(new IGameStateObserver() {
             @Override
             public void onStart() {
-                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 render();
                 startTurn();
             }
@@ -88,12 +87,12 @@ public class GameController extends ControllerBase {
 
             @Override
             public void onChangeTurn() {
-                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 render();
                 startTurn();
             }
 
             private void startTurn() {
+                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 if (gameManager.isCurrentPlayerHuman()) {
                     enablePlayerControls();
                 }
@@ -142,6 +141,7 @@ public class GameController extends ControllerBase {
     private void render() {
         try {
             renderHistory();
+            renderDiscardPile();
             renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
@@ -153,7 +153,7 @@ public class GameController extends ControllerBase {
      */
     private void handleBotTurn() {
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.seconds(1 + new Random().nextInt(3, 6)), // Delay entre 1 e 3 segundos
+                Duration.seconds(1 + new Random().nextInt(3, 6)),
                 event ->{
                     int percentage = new Random().nextInt(100);
                     gameManager.handleBotAction(percentage);
@@ -263,23 +263,28 @@ public class GameController extends ControllerBase {
         var cardNode = playerHandGridPane.getChildren().get(uiManager.getClickedCard());
 
         applyTransition(cardNode, Duration.millis(500), TransitionType.FADE_OUT, () -> {
-            pilesPane.getChildren().remove(discardPileImage);
             playerHandGridPane.getChildren().remove(cardNode);
             renderPlayerHand();
-
-            Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
-
-            ImageView discardImageView = new ImageView(cardImage);
-            discardImageView.setFitWidth(uiManager.getCardWidth());
-            discardImageView.setFitHeight(uiManager.getCardHeight());
-            discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
-            discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
-
-            applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
-
-            pilesPane.getChildren().add(discardImageView);
+            renderDiscardPile();
         });
 
+    }
+
+    private void renderDiscardPile() {
+        if (discardPileImage != null)
+            pilesPane.getChildren().remove(discardPileImage);
+
+        Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
+
+        ImageView discardImageView = new ImageView(cardImage);
+        discardImageView.setFitWidth(uiManager.getCardWidth());
+        discardImageView.setFitHeight(uiManager.getCardHeight());
+        discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
+        discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
+
+        applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
+
+        pilesPane.getChildren().add(discardImageView);
     }
 
     private void animateCardDrawn() {

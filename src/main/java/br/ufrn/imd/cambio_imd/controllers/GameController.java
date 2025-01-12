@@ -8,6 +8,7 @@ import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -93,13 +94,20 @@ public class GameController extends ControllerBase {
             public void onSuperCardDetected(int hintsNumber){
                 uiManager.addMessageOnHistory("Você pode ver " + hintsNumber + " cartas!");
                 renderHistory();
-                showBtn.setText("Ver");
-                showBtn.setOnMouseClicked(click -> handleShowBtnClick());
-                showBtn.setMinWidth(50);
+            }
 
-                if(!optionsBox.getChildren().contains(showBtn)){
-                    optionsBox.getChildren().add(showBtn);
-                }
+            @Override
+            public void onCambioAsked() {
+                uiManager.addMessageOnHistory("O jogador " + gameManager.getCurrentPlayerName() + " pediu um câmbio!");
+                renderHistory();
+                // Disso assumimos que, ao pedir um câmbio, o jogador ainda está dentro de sua rodada e isso não terpa
+                // conflitos caso um novo jogador assumisse logo após ele pedir câmbio
+            }
+
+            @Override
+            public void onWinner(int playerId) {
+                uiManager.addMessageOnHistory("O jogador " + gameManager.getWinner().getName() + " venceu!");
+                renderHistory();
             }
         });
 
@@ -109,6 +117,13 @@ public class GameController extends ControllerBase {
         swapBtn.setText("Trocar");
         swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
         swapBtn.setMinWidth(50);
+        showBtn.setText("Ver");
+        showBtn.setOnMouseClicked(click -> handleShowBtnClick());
+        showBtn.setMinWidth(50);
+
+        if(!optionsBox.getChildren().contains(showBtn)){
+            optionsBox.getChildren().add(showBtn);
+        }
 
 
         optionsBox = new VBox(5, playBtn, swapBtn);
@@ -136,7 +151,7 @@ public class GameController extends ControllerBase {
                     playerHandGridPane.getChildren().remove(optionsBox);
                 });
             }
-        });
+        });        
     }
 
     public void render() {
@@ -219,9 +234,23 @@ public class GameController extends ControllerBase {
     protected void handleSwapBtnClick() {
         System.out.println("Helloooo swaaaap");
     }
-
+    
+    @FXML
     protected void handleShowBtnClick() {
         System.out.println("See a card bih");
+        int cardIndex = uiManager.getClickedCard();
+        
+        ImageView cardImageView = (ImageView) playerHandGridPane.getChildren().get(cardIndex);
+        Node node = playerHandGridPane.getChildren().get(cardIndex);
+        int col = GridPane.getColumnIndex(node);
+        int row = GridPane.getRowIndex(node);
+
+        var card = gameManager.getCurrentPlayerCards().get(cardIndex);
+
+        Image frontImage = CardAssetMapper.getAsset(card); // Frente da carta
+        Image backImage = CardAssetMapper.getBackCardAsset(); // Verso da carta
+
+        animateCardFlip(cardImageView, frontImage, backImage); 
     }
 
     // TODO: colocar de volta o historyTextArea
@@ -313,32 +342,50 @@ public class GameController extends ControllerBase {
         transition.play();
     }
     
-    private void animateImageViewChange() {
-        // Nova imagem que será mostrada
-        Image newImage = new Image("file:path/to/newImage.png"); // Substitua pelo caminho da nova imagem
-        ImageView imageView = discardPileImage; // Ou o seu ImageView de destino
+    private void animateCardFlip(ImageView cardImageView, Image frontImage, Image backImage) {
+        // Etapa 1: Achatar a carta (escalando horizontalmente para zero)
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(300), cardImageView);
+        scaleOut.setFromX(1.0);
+        scaleOut.setToX(0.0); // Achatar horizontalmente
     
-        // Aplica a transição de fade-out na imagem atual
-        applyTransition(imageView, Duration.millis(300), TransitionType.FADE_OUT, () -> {
-            // Troca a imagem do ImageView para a nova imagem
-            imageView.setImage(newImage);
+        // Etapa 2: Alterar a imagem da carta no meio do flip
+        scaleOut.setOnFinished(event -> {
+            cardImageView.setImage(frontImage); // Troca para frente
+            
+            // Etapa 3: Expandir novamente a carta (restaurar escala horizontal)
+            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(300), cardImageView);
+            scaleIn.setFromX(0.0);
+            scaleIn.setToX(1.0); // Restaurar a largura
     
-            // Aplica a transição de fade-in para a nova imagem
-            applyTransition(imageView, Duration.millis(300), TransitionType.FADE_IN, () -> {
-                // Pausa por 1.7 segundos antes de restaurar a imagem original
+            scaleIn.setOnFinished(e -> {
+                // Etapa 4: Pausar por 1.7 segundos antes de virar de volta
                 PauseTransition pause = new PauseTransition(Duration.seconds(1.7));
-                pause.setOnFinished(event -> {
-                    // Restaura a imagem original
-                    Image originalImage = new Image("file:path/to/originalImage.png"); // Caminho da imagem original
-                    imageView.setImage(originalImage);
+                pause.setOnFinished(p -> {
+                    // Etapa 5: Reverter a carta para o verso
+                    ScaleTransition scaleOutBack = new ScaleTransition(Duration.millis(300), cardImageView);
+                    scaleOutBack.setFromX(1.0);
+                    scaleOutBack.setToX(0.0);
     
-                    // Aplica a animação de fade-in para a imagem original
-                    applyTransition(imageView, Duration.millis(300), TransitionType.FADE_IN);
+                    scaleOutBack.setOnFinished(ev -> {
+                        cardImageView.setImage(backImage); // Retorna ao verso da carta
+    
+                        ScaleTransition scaleInBack = new ScaleTransition(Duration.millis(300), cardImageView);
+                        scaleInBack.setFromX(0.0);
+                        scaleInBack.setToX(1.0);
+                        scaleInBack.play(); // Expande de volta ao estado original
+                    });
+    
+                    scaleOutBack.play(); // Achatar novamente para virar de volta
                 });
-                pause.play();
-            });
-        });
-    }
     
+                pause.play(); // Executa a pausa de 1.7 segundos
+            });
+    
+            scaleIn.play(); // Executa a expansão inicial
+        });
+    
+        scaleOut.play(); // Inicia a animação de virada
+    }
 
+    
 }

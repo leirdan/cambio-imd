@@ -69,6 +69,7 @@ public class GameController extends ControllerBase {
 
     @FXML
     protected void initialize() {
+        initObservers();
 
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());

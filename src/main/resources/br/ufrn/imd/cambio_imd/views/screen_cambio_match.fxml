@@ -36,16 +36,26 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
     <children>
-        <Pane fx:id="pilesPane" layoutX="274.0" layoutY="30.0" prefHeight="288.0" prefWidth="506.0">
+        <Pane fx:id="pilesPane" layoutX="274.0" layoutY="53.0" prefHeight="219.0" prefWidth="506.0">
             <children>
-                <ImageView fx:id="drawPileImage" fitHeight="120.0" fitWidth="79.0" layoutX="359.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                    </image>
-                </ImageView>
+            <Pane layoutX="292.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                      <ImageView fx:id="drawPileImage" fitHeight="120.0" fitWidth="79.0" layoutX="61.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                              <Image url="@assets/img/cards/redBack.png" />
+                          </image>
+                      </ImageView>
+                  <Label fx:id="drawPileCountLabel" layoutX="86.0" layoutY="23.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
             </children>
         </Pane>
         <Pane layoutX="79.0" layoutY="331.0" prefHeight="214.0" prefWidth="895.0">
@@ -70,5 +80,10 @@
                 <Button fx:id="skipBtn" layoutX="458.0" layoutY="51.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pular vez" />
             </children>
         </Pane>
+      <TextField fx:id="playerTextField" editable="false" layoutX="452.0" layoutY="288.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
     </children>
 </AnchorPane>

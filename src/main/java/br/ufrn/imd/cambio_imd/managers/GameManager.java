@@ -62,6 +62,7 @@ public class GameManager {
     public boolean isCurrentPlayerHuman() {
         return context.getCurrentPlayer().isHuman();
     }
+
     public boolean isCurrentRoundNormal() {
         return context.getRoundType() == Round.NORMAL;
     }
@@ -135,6 +136,10 @@ public class GameManager {
             }
             advanceTurn();
         }
+    }
+
+    public int getDrawPileCardsAmount() {
+        return context.getDrawPileCount();
     }
 
     /**
@@ -211,7 +216,6 @@ public class GameManager {
     }
 
     private void notifyStartGame() {
-        System.out.println("Entrou em notify");
         for (var observer : stateObservers) {
             observer.onStart();
         }

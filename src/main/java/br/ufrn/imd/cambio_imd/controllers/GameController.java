@@ -15,10 +15,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -27,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import javax.swing.*;
 import java.util.Random;
 import java.util.Stack;
 
@@ -36,36 +34,21 @@ import java.util.Stack;
 public class GameController extends ControllerBase {
     @FXML
     private TextField playerTextField;
-
     @FXML
     private Label drawPileCountLabel;
-
     @FXML
     private GridPane playerHandGridPane;
-
-
     @FXML
     private Pane pilesPane;
-
     @FXML
-    private ImageView discardPileImage;
-
-    @FXML
-    private ImageView drawPileImage;
-
+    private ImageView discardPileImage, drawPileImage;
     @FXML
     private TextArea historyTextArea;
-
     @FXML
-    private Button skipBtn;
-
-    @FXML
-    private Button cambioBtn;
-
-    private final Button playBtn = new Button();
-    private final Button showBtn = new Button();
-
+    private Button skipBtn, cambioBtn;
+    private final Button playBtn = new Button(), showBtn = new Button();
     private VBox optionsBox;
+    private Alert winnerAlert;
 
     @FXML
     protected void initialize() {
@@ -141,11 +124,13 @@ public class GameController extends ControllerBase {
 
             @Override
             public void onSuperCardDetected(int hintsNumber) {
-                uiManager.addMessageOnHistory("Você pode ver " + hintsNumber + " cartas!");
+                uiManager.addMessageOnHistory(gameManager.getCurrentPlayerName() + " pode ver " + hintsNumber + " cartas!");
                 renderHistory();
-                uiManager.setRemainingHints(hintsNumber);
-                if (optionsBox != null && !optionsBox.getChildren().contains(showBtn)) {
-                    optionsBox.getChildren().add(showBtn);
+                if (gameManager.isCurrentPlayerHuman()) {
+                    uiManager.setRemainingHints(hintsNumber);
+                    if (optionsBox != null && !optionsBox.getChildren().contains(showBtn)) {
+                        optionsBox.getChildren().add(showBtn);
+                    }
                 }
             }
 
@@ -161,6 +146,7 @@ public class GameController extends ControllerBase {
             public void onWinner(int playerId) {
                 uiManager.addMessageOnHistory("O " + gameManager.getWinner().getName() + " venceu!");
                 renderHistory();
+                renderWinnerAlert();
             }
 
             private void startTurn() {
@@ -180,6 +166,7 @@ public class GameController extends ControllerBase {
             renderHistory();
             renderDiscardPile();
             renderPlayerInfo();
+            renderDrawPileCount();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
         }
@@ -188,6 +175,10 @@ public class GameController extends ControllerBase {
     @FXML
     private void handleCambioBtnClick() {
         System.out.println("CAMBIOOOO");
+    }
+
+    private void renderDrawPileCount() {
+        drawPileCountLabel.setText("Restam " + gameManager.getDrawPileCardsAmount() + " cartas");
     }
 
     /**
@@ -225,8 +216,20 @@ public class GameController extends ControllerBase {
         gameManager.skipTurn();
     }
 
+    private void renderWinnerAlert() {
+        winnerAlert = new Alert(Alert.AlertType.INFORMATION);
+        winnerAlert.setTitle("Fim de jogo");
+        if (gameManager.isCurrentPlayerHuman()) {
+            winnerAlert.setHeaderText("Parabéns!");
+            winnerAlert.setContentText("Você venceu!");
+        } else {
+            winnerAlert.setHeaderText("Não foi dessa vez!");
+            winnerAlert.setContentText(gameManager.getCurrentPlayerName() + " venceu o jogo!");
+        }
+    }
+
     private void renderPlayerInfo() {
-        // playerTextField.setText(gameManager.getCurrentPlayerName());
+        playerTextField.setText(gameManager.getCurrentPlayerName());
         renderPlayerHand();
     }
 

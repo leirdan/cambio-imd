@@ -1,6 +1,7 @@
 package br.ufrn.imd.cambio_imd.dao;
 
 import br.ufrn.imd.cambio_imd.enums.Round;
+import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
@@ -151,5 +152,14 @@ public class GameContext {
         this.playerToAskCambio = playerToAskCambio;
     }
 
-    
+    public int getHintFromSuperCard(Card card){
+        if(card.isSuper()){
+            if(card.getValue() == 11){
+                return 1;
+            } else if (card.getValue() >= 12){
+                return 2;
+            }
+        }
+        return 0;
+    }
 }

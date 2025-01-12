@@ -47,6 +47,11 @@ public class GameManager {
         new GiveCardsToPlayersCommand().execute();
         new GeneratePlayersOrderCommand().execute();
 
+        var discardPile = context.getDiscardPile();
+        var drawPile = context.getDrawPile();
+
+        discardPile.addCard(drawPile.removeTopCard());
+        
         notifyStartGame();
     }
 
@@ -103,6 +108,9 @@ public class GameManager {
         notifyCardDiscarded();
         new PlayerDrawCardFromPileCommand(player, drawPile).execute();
         notifyCardDrawn();
+        if(getTopCardOnDiscardPile().isSuper()){
+            notifySuperCardDetected();
+        }
     }
 
     public Stack<Card> getCurrentPlayerCards() {
@@ -149,6 +157,12 @@ public class GameManager {
     private void notifyChangeTurn() {
         for (var observer : stateObservers) {
             observer.onChangeTurn();
+        }
+    }
+
+    private void notifySuperCardDetected(){
+        for (var observer : stateObservers) {
+            observer.onSuperCardDetected(context.getHintFromSuperCard(getTopCardOnDiscardPile()));
         }
     }
 

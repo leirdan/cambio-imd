@@ -23,7 +23,6 @@ public class Player extends Entity {
     
     //< De jogo
     private int cardIndex = -1;
-    private int hints = 0;
 
     public Player() {
         super();
@@ -110,13 +109,4 @@ public class Player extends Entity {
     public boolean isHuman(){
         return this.type == PlayerType.HUMAN;
     }
-
-    public int getHints(){
-        return hints;
-    }
-
-    public void setHints(int hints){
-        this.hints = hints;
-    }
-    
 }

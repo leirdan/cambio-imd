@@ -9,6 +9,7 @@ public class CardHand extends Deck {
     /**
      * @return
      */
+
     public int computePoints() {
         int points = 0;
         for (var card : cards) {
@@ -16,5 +17,4 @@ public class CardHand extends Deck {
         }
         return points;
     }
-
 }

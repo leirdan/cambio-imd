@@ -7,6 +7,7 @@ import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -51,6 +52,8 @@ public class GameController extends ControllerBase {
 
     private final Button playBtn = new Button();
     private final Button swapBtn = new Button();
+    private final Button showBtn = new Button();
+
     private VBox optionsBox;
 
     @FXML
@@ -85,6 +88,19 @@ public class GameController extends ControllerBase {
             public void onChangeTurn() {
                 render();
             }
+
+            @Override
+            public void onSuperCardDetected(int hintsNumber){
+                uiManager.addMessageOnHistory("Você pode ver " + hintsNumber + " cartas!");
+                renderHistory();
+                showBtn.setText("Ver");
+                showBtn.setOnMouseClicked(click -> handleShowBtnClick());
+                showBtn.setMinWidth(50);
+
+                if(!optionsBox.getChildren().contains(showBtn)){
+                    optionsBox.getChildren().add(showBtn);
+                }
+            }
         });
 
         playBtn.setText("Jogar");
@@ -93,6 +109,7 @@ public class GameController extends ControllerBase {
         swapBtn.setText("Trocar");
         swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
         swapBtn.setMinWidth(50);
+
 
         optionsBox = new VBox(5, playBtn, swapBtn);
         optionsBox.setAlignment(Pos.CENTER);
@@ -122,7 +139,6 @@ public class GameController extends ControllerBase {
         });
     }
 
-
     public void render() {
         try {
             // renderHistory();
@@ -131,7 +147,6 @@ public class GameController extends ControllerBase {
             System.out.println(ex.getMessage());
         }
     }
-
 
     private void renderPlayerInfo() {
         // playerTextField.setText(gameManager.getCurrentPlayerName());
@@ -203,6 +218,10 @@ public class GameController extends ControllerBase {
 
     protected void handleSwapBtnClick() {
         System.out.println("Helloooo swaaaap");
+    }
+
+    protected void handleShowBtnClick() {
+        System.out.println("See a card bih");
     }
 
     // TODO: colocar de volta o historyTextArea
@@ -293,4 +312,33 @@ public class GameController extends ControllerBase {
         }
         transition.play();
     }
+    
+    private void animateImageViewChange() {
+        // Nova imagem que será mostrada
+        Image newImage = new Image("file:path/to/newImage.png"); // Substitua pelo caminho da nova imagem
+        ImageView imageView = discardPileImage; // Ou o seu ImageView de destino
+    
+        // Aplica a transição de fade-out na imagem atual
+        applyTransition(imageView, Duration.millis(300), TransitionType.FADE_OUT, () -> {
+            // Troca a imagem do ImageView para a nova imagem
+            imageView.setImage(newImage);
+    
+            // Aplica a transição de fade-in para a nova imagem
+            applyTransition(imageView, Duration.millis(300), TransitionType.FADE_IN, () -> {
+                // Pausa por 1.7 segundos antes de restaurar a imagem original
+                PauseTransition pause = new PauseTransition(Duration.seconds(1.7));
+                pause.setOnFinished(event -> {
+                    // Restaura a imagem original
+                    Image originalImage = new Image("file:path/to/originalImage.png"); // Caminho da imagem original
+                    imageView.setImage(originalImage);
+    
+                    // Aplica a animação de fade-in para a imagem original
+                    applyTransition(imageView, Duration.millis(300), TransitionType.FADE_IN);
+                });
+                pause.play();
+            });
+        });
+    }
+    
+
 }

@@ -179,6 +179,7 @@ public class GameManager {
                     context.setFirstPlayerIndex(nextFirstPlayerIndex);
                     context.setRoundType(Round.NORMAL);
                     notifyAction("Rodada normal! ");
+                    resetPlayersRestrictions();
                 }
             }
         } else if (context.getRoundType() == Round.NORMAL) {

@@ -1,30 +1,24 @@
 package br.ufrn.imd.cambio_imd.managers;
 
-import br.ufrn.imd.cambio_imd.models.cards.Card;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Label;
-import br.ufrn.imd.cambio_imd.dao.GameContext;
-import br.ufrn.imd.cambio_imd.models.players.Player;
-import javafx.scene.control.TextArea;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Stack;
 
-public class GameUIManager {
+public class UIManager {
     private double cardWidth;
     private double cardHeight;
     private int clickedCard;
     private Point2D discardPaneCoords = new Point2D(175, 12);
     private int remainingHints = 0;
-    private static GameUIManager instance;
+    private static UIManager instance;
     private ArrayList<String> history = new ArrayList<>();
 
-    private GameContext context = GameContext.getInstance();
+    private GameDAO context = GameDAO.getInstance();
 
-    private GameUIManager() {
+    private UIManager() {
     }
 
     public double getCardWidth() {
@@ -51,9 +45,9 @@ public class GameUIManager {
         this.cardHeight = cardHeight;
     }
 
-    public static GameUIManager getInstance() {
+    public static UIManager getInstance() {
         if (instance == null)
-            instance = new GameUIManager();
+            instance = new UIManager();
 
         return instance;
     }

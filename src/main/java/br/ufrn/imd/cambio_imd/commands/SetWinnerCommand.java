@@ -1,6 +1,6 @@
 package br.ufrn.imd.cambio_imd.commands;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
 import br.ufrn.imd.cambio_imd.models.players.*;
 import java.util.LinkedHashSet;
 
@@ -12,7 +12,7 @@ public class SetWinnerCommand implements ICommand {
 
     @Override
     public void execute() {
-        var context = GameContext.getInstance();
+        var context = GameDAO.getInstance();
         if(context.getCurrentPlayerIndex() == context.getPlayerThatAskedCambioIndex() && !isCut){
             LinkedHashSet<Player>players = context.getPlayers().getData();
             Player winner = players.iterator().next();

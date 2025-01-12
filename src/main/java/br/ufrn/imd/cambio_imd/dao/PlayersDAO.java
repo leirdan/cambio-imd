@@ -1,9 +1,11 @@
-package br.ufrn.imd.cambio_imd.models.players;
+package br.ufrn.imd.cambio_imd.dao;
+
+import br.ufrn.imd.cambio_imd.models.players.Player;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 
-public class Players {
+public class PlayersDAO {
     private LinkedHashSet<Player> data = new LinkedHashSet<>();
 
     public LinkedHashSet<Player> getData() {

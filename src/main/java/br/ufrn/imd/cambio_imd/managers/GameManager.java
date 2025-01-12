@@ -1,7 +1,7 @@
 package br.ufrn.imd.cambio_imd.managers;
 
 import br.ufrn.imd.cambio_imd.commands.*;
-import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
 import br.ufrn.imd.cambio_imd.enums.Round;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.Stack;
 
 public class GameManager {
-    private GameContext context = GameContext.getInstance();
+    private GameDAO context = GameDAO.getInstance();
     private static GameManager instance;
 
     // Observers

@@ -1,7 +1,7 @@
 package br.ufrn.imd.cambio_imd.controllers;
 
 import br.ufrn.imd.cambio_imd.managers.GameManager;
-import br.ufrn.imd.cambio_imd.managers.GameUIManager;
+import br.ufrn.imd.cambio_imd.managers.UIManager;
 import br.ufrn.imd.cambio_imd.managers.ScreenManager;
 
 /**
@@ -12,5 +12,5 @@ import br.ufrn.imd.cambio_imd.managers.ScreenManager;
 public abstract class ControllerBase {
     protected GameManager gameManager = GameManager.getInstance();
     protected ScreenManager screenManager = ScreenManager.getInstance();
-    protected GameUIManager uiManager = GameUIManager.getInstance();
+    protected UIManager uiManager = UIManager.getInstance();
 }

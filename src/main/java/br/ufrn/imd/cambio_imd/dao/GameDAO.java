@@ -6,14 +6,13 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
-import br.ufrn.imd.cambio_imd.models.players.Players;
 
-public class GameContext {
+public class GameDAO {
 
     /**
-     * Informações sobre os players
+     * Informações sobre os playersDAO
      */
-    private Players players = new Players(); //< Lista de jogadores
+    private PlayersDAO playersDAO = new PlayersDAO(); //< Lista de jogadores
 
     private int currentPlayerIndex = 0; //< Atual jogador na ordem cronológica original do jogo (Acesso de avanço de ordem de jogo, por isso um inteiro)
     private int firstPlayerIndex = 0; //< O primeiro jogador que jogou na rodada
@@ -42,14 +41,14 @@ public class GameContext {
     private int cardsPerHandLimit = 0; //< Quantas cartas a mão de cada jogador terá
     private int revealedCardsLimit = 0; //< Quantas cartas os jogadores poderão ver inicialmente
 
-    private static GameContext instance = null;
+    private static GameDAO instance = null;
 
-    private GameContext() {
+    private GameDAO() {
     }
 
-    public static GameContext getInstance() {
+    public static GameDAO getInstance() {
         if (instance == null)
-            instance = new GameContext();
+            instance = new GameDAO();
 
         return instance;
     }
@@ -57,12 +56,12 @@ public class GameContext {
     /*
      * Métodos relacionados aos jogadores
      */
-    public Players getPlayers() {
-        return players;
+    public PlayersDAO getPlayers() {
+        return playersDAO;
     }
 
-    public void setPlayers(Players players) {
-        this.players = players;
+    public void setPlayers(PlayersDAO playersDAO) {
+        this.playersDAO = playersDAO;
     }
 
     public Round getRoundType() {
@@ -74,14 +73,14 @@ public class GameContext {
     }
 
     public Player getCurrentPlayer() {
-        if (players.getData() == null || players.getData().isEmpty())
-            throw new UnitializedGameException("Players were not set!");
+        if (playersDAO.getData() == null || playersDAO.getData().isEmpty())
+            throw new UnitializedGameException("PlayersDAO were not set!");
 
-        int size = players.getData().size();
+        int size = playersDAO.getData().size();
         if (currentPlayerIndex >= size)
             currentPlayerIndex = 0;
 
-        var playersArray = players.getData().toArray(new Player[0]);
+        var playersArray = playersDAO.getData().toArray(new Player[0]);
         return playersArray[currentPlayerIndex];
     }
 
@@ -151,7 +150,7 @@ public class GameContext {
     }
 
     public boolean hasAnyPlayerWithoutCards() {
-        for (var p : players.getData()) {
+        for (var p : playersDAO.getData()) {
             if (p.getHand().isEmpty())
                 return true;
         }

@@ -1,6 +1,5 @@
 package br.ufrn.imd.cambio_imd.commands;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.players.Player;
@@ -23,7 +22,7 @@ public class PlayerDiscardCardOnPileCommand implements ICommand {
         // Inserir na pilha de descarte
         pile.addCard(selectedCard);
         
-        // GameContext context = GameContext.getInstance();
+        // GameDAO context = GameDAO.getInstance();
         // context.setLastPlayerToPlayId(player.getId());
     }
 }

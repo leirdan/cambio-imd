@@ -6,13 +6,20 @@ import br.ufrn.imd.cambio_imd.models.Entity;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 
 public class Player extends Entity {
+    /*
+     * Informações do jogador
+     */
     private String name = "";
-    private boolean wrongCut = false;
-    private boolean prohibitedCut = false;
     private CardHand cardHand = new CardHand();
     private PlayerType type = PlayerType.ROBOT;
 
-    private int cardIndex = -1;
+    /*
+     * Informações de ação
+     */
+
+    //< De corte
+    private boolean wrongCut = false;
+    private boolean prohibitedCut = false;
 
     public Player() {
         super();
@@ -76,14 +83,6 @@ public class Player extends Entity {
         this.prohibitedCut = prohibitedCut;
     }
 
-    public int getCardIndex() {
-        return cardIndex;
-    }
-
-    public void setCardIndex(int cardIndex) {
-        this.cardIndex = cardIndex;
-    }
-
     public boolean isWrongCut() {
         return wrongCut;
     }
@@ -99,5 +98,5 @@ public class Player extends Entity {
     public boolean isHuman(){
         return this.type == PlayerType.HUMAN;
     }
-    
 }
+

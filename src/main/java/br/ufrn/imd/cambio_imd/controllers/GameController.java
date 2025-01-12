@@ -6,13 +6,17 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
+import br.ufrn.imd.cambio_imd.utility.RandomGenerator;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -21,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -28,13 +33,14 @@ import java.util.Stack;
  */
 public class GameController extends ControllerBase {
     @FXML
-    private Label playerTurnLabel;
+    private TextField playerTextField;
 
     @FXML
     private Label drawPileCountLabel;
 
     @FXML
     private GridPane playerHandGridPane;
+
 
     @FXML
     private Pane pilesPane;
@@ -46,7 +52,13 @@ public class GameController extends ControllerBase {
     private ImageView drawPileImage;
 
     @FXML
-    private TextArea messageBox;
+    private TextArea historyTextArea;
+
+    @FXML
+    private Button skipBtn;
+
+    @FXML
+    private Button cambioBtn;
 
     private final Button playBtn = new Button();
     private final Button swapBtn = new Button();
@@ -55,29 +67,7 @@ public class GameController extends ControllerBase {
     @FXML
     protected void initialize() {
         // FIXME: documentar bem essa inicialização
-        // Registrando observadores por classes anônimas
-        gameManager.addAnimationObserver(new IGameAnimationObserver() {
-            @Override
-            public void onCardDrawn() {
-                animateCardDrawn();
-            }
-
-            @Override
-            public void onCardDiscarded() {
-                animateCardDiscarded();
-            }
-        });
-
-        /*
-        gameManager.addStateObserver(() -> new IGameStateObserver() {
-            @Override
-            public void onStart() {
-                System.out.println("Mudou pra jogo");
-                render();
-            }
-        });
-        */
-        gameManager.addStateObserver(this::render);
+        initObservers();
 
         playBtn.setText("Jogar");
         playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
@@ -85,6 +75,8 @@ public class GameController extends ControllerBase {
         swapBtn.setText("Trocar");
         swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
         swapBtn.setMinWidth(50);
+        skipBtn.setOnMouseClicked(click -> handleSkipBtnClick());
+        cambioBtn.setOnMouseClicked(click -> handleCambioBtnClick());
 
         optionsBox = new VBox(5, playBtn, swapBtn);
         optionsBox.setAlignment(Pos.CENTER);
@@ -114,41 +106,106 @@ public class GameController extends ControllerBase {
         });
     }
 
+    protected void initObservers() {
+        gameManager.addAnimationObserver(new IGameAnimationObserver() {
+            @Override
+            public void onCardDrawn() {
+                animateCardDrawn();
+            }
 
-    public void render() {
+            @Override
+            public void onCardDiscarded() {
+                animateCardDiscarded();
+            }
+        });
+
+        gameManager.addStateObserver(new IGameStateObserver() {
+            @Override
+            public void onStart() {
+                render();
+                startTurn();
+            }
+
+            @Override
+            public void onAction(String message) {
+                uiManager.addMessageOnHistory(message);
+                renderHistory();
+            }
+
+            @Override
+            public void onChangeTurn() {
+                render();
+                startTurn();
+            }
+
+            private void startTurn() {
+                uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
+                if (gameManager.isCurrentPlayerHuman()) {
+                    enablePlayerControls();
+                } else {
+                    disablePlayerControls();
+                    handleBotTurn();
+                }
+            }
+        });
+
+    }
+
+    private void render() {
         try {
-            print("Jogo iniciado");
-            renderPlayerHand();
+            renderHistory();
+            renderDiscardPile();
+            renderPlayerInfo();
         } catch (UnitializedGameException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
     @FXML
-    protected void handleCardClick(MouseEvent event) {
-        System.out.println("Clickou!!");
-        int cardIndex = uiManager.getClickedCard();
-
-        if (playerHandGridPane.getChildren().contains(optionsBox))
-            playerHandGridPane.getChildren().remove(optionsBox);
-
-        Node node = playerHandGridPane.getChildren().get(cardIndex);
-        int col = GridPane.getColumnIndex(node);
-        int row = GridPane.getRowIndex(node);
-        // Se estiver na 1ª linha aparece em cima da carta, senão, aparece abaixo.
-        optionsBox.setTranslateY(row == 0 ? -50 : 50);
-        applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_IN);
-
-        playerHandGridPane.add(optionsBox, col, row);
+    private void handleCambioBtnClick() {
+        System.out.println("CAMBIOOOO");
     }
 
-    protected void handlePlayBtnClick() {
-        System.out.println("Helloooo play");
-        gameManager.playCard(uiManager.getClickedCard());
+    /**
+     *
+     */
+    private void handleBotTurn() {
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.seconds(1 + RandomGenerator.getInt(3, 6)),
+                event -> {
+                    int percentage = RandomGenerator.getInt(100);
+                    gameManager.handleBotAction(percentage);
+                }
+        ));
+        timeline.setCycleCount(1);
+        timeline.play();
     }
 
-    protected void handleSwapBtnClick() {
-        System.out.println("Helloooo swaaaap");
+    private void enablePlayerControls() {
+        playBtn.setDisable(false);
+        swapBtn.setDisable(false);
+        optionsBox.setDisable(false);
+        cambioBtn.setDisable(false);
+
+        skipBtn.setDisable(gameManager.isCurrentRoundNormal());
+    }
+
+    private void disablePlayerControls() {
+        playBtn.setDisable(true);
+        swapBtn.setDisable(true);
+        optionsBox.setDisable(true);
+        cambioBtn.setDisable(true);
+        skipBtn.setDisable(true);
+    }
+
+    @FXML
+    private void handleSkipBtnClick() {
+        gameManager.skipTurn();
+    }
+
+    private void renderPlayerInfo() {
+        // playerTextField.setText(gameManager.getCurrentPlayerName());
+        renderPlayerHand();
     }
 
     private void renderPlayerHand() {
@@ -191,11 +248,36 @@ public class GameController extends ControllerBase {
         }
     }
 
-    private void print(String msg) {
-        String instant = uiManager.getFormattedInstant();
-        messageBox.appendText("[" + instant + "]: " + msg + "\n");
+    @FXML
+    protected void handleCardClick(MouseEvent event) {
+        int cardIndex = uiManager.getClickedCard();
+
+        if (playerHandGridPane.getChildren().contains(optionsBox))
+            playerHandGridPane.getChildren().remove(optionsBox);
+
+        Node node = playerHandGridPane.getChildren().get(cardIndex);
+        int col = GridPane.getColumnIndex(node);
+        int row = GridPane.getRowIndex(node);
+        // Se estiver na 1ª linha aparece em cima da carta, senão, aparece abaixo.
+        optionsBox.setTranslateY(row == 0 ? -50 : 50);
+        applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_IN);
+
+        playerHandGridPane.add(optionsBox, col, row);
     }
 
+    protected void handlePlayBtnClick() {
+        gameManager.playCard(uiManager.getClickedCard());
+    }
+
+    protected void handleSwapBtnClick() {
+    }
+
+    protected void renderHistory() {
+        historyTextArea.clear();
+        for (var message : uiManager.getHistory()) {
+            historyTextArea.appendText(message);
+        }
+    }
 
     // Métodos de animação
     // TODO: será que isso é responsabilidade desta classe?
@@ -205,23 +287,28 @@ public class GameController extends ControllerBase {
         var cardNode = playerHandGridPane.getChildren().get(uiManager.getClickedCard());
 
         applyTransition(cardNode, Duration.millis(500), TransitionType.FADE_OUT, () -> {
-            pilesPane.getChildren().remove(discardPileImage);
             playerHandGridPane.getChildren().remove(cardNode);
             renderPlayerHand();
-
-            Image cardImage = CardAssetMapper.getAsset(gameManager.getCurrentPlayerCards().get(uiManager.getClickedCard()));
-
-            ImageView discardImageView = new ImageView(cardImage);
-            discardImageView.setFitWidth(uiManager.getCardWidth());
-            discardImageView.setFitHeight(uiManager.getCardHeight());
-            discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
-            discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
-
-            applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
-
-            pilesPane.getChildren().add(discardImageView);
+            renderDiscardPile();
         });
 
+    }
+
+    private void renderDiscardPile() {
+        if (discardPileImage != null)
+            pilesPane.getChildren().remove(discardPileImage);
+
+        Image cardImage = CardAssetMapper.getAsset(gameManager.getTopCardOnDiscardPile());
+
+        ImageView discardImageView = new ImageView(cardImage);
+        discardImageView.setFitWidth(uiManager.getCardWidth());
+        discardImageView.setFitHeight(uiManager.getCardHeight());
+        discardImageView.setLayoutX(uiManager.getDiscardPaneCoords().getX());
+        discardImageView.setLayoutY(uiManager.getDiscardPaneCoords().getY());
+
+        applyTransition(discardImageView, Duration.millis(500), TransitionType.FADE_IN);
+
+        pilesPane.getChildren().add(discardImageView);
     }
 
     private void animateCardDrawn() {

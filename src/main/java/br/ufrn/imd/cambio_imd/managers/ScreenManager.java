@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class ScreenManager {
     private Stage primaryScreen;
-    private Map<Screen, Pair<Scene, FXMLLoader>> screens;
+    private Map<Screen, Scene> screens;
     private static ScreenManager instance;
 
     private ScreenManager() {
@@ -31,21 +31,18 @@ public class ScreenManager {
         this.primaryScreen = stage;
     }
 
-    public FXMLLoader getLoader(Screen screen) {
-        return screens.get(screen).getValue();
-    }
 
     public void add(Screen screen) throws IOException {
         var loader = new FXMLLoader(CambioApplication.class.getResource(screen.getUrl()));
         var newScene = new Scene(loader.load());
 
-        screens.put(screen, new Pair<>(newScene, loader));
+        screens.put(screen, newScene);
     }
 
     public void change(Screen screen) {
         var sceneToChange = screens.get(screen);
         if (sceneToChange != null)
-            primaryScreen.setScene(sceneToChange.getKey());
+            primaryScreen.setScene(sceneToChange);
     }
 
 }

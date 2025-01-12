@@ -24,7 +24,7 @@ public class CambioApplication extends Application {
         stage.setTitle("Cambio");
         stage.setWidth(1024);
         stage.setHeight(720);
-        stage.setResizable(true);
+        stage.setResizable(false);
         stage.show();
     }
 

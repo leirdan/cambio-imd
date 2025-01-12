@@ -108,7 +108,8 @@
                </children>
                 </GridPane>
                 <TextArea fx:id="historyTextArea" editable="false" layoutX="581.0" layoutY="10.0" prefHeight="191.0" prefWidth="212.0" />
-            <Button layoutX="458.0" layoutY="75.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pedir câmbio" />
+            <Button layoutX="458.0" layoutY="123.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pedir câmbio" fx:id="cambioBtn" />
+            <Button layoutX="458.0" layoutY="51.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pular vez" fx:id="skipBtn" />
             </children>
         </Pane>
     </children>

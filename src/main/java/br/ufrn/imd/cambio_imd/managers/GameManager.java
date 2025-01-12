@@ -60,6 +60,9 @@ public class GameManager {
     public boolean isCurrentPlayerHuman() {
         return context.getCurrentPlayer().isHuman();
     }
+    public boolean isCurrentRoundNormal() {
+        return context.getRoundType() == Round.NORMAL;
+    }
 
     public void handleBotAction(int percentage) {
         if (isCurrentPlayerHuman()) {
@@ -83,6 +86,7 @@ public class GameManager {
         advanceTurn();
     }
 
+    // TODO: implementar ação de pediu câmbio!
     public void callCambio() {
         // lógico de pedir cambio
         notifyAction(getCurrentPlayerName() + " pediu câmbio!");
@@ -133,18 +137,6 @@ public class GameManager {
      * automaticamente a mudança de turno a todos os observadores.
      */
     private void advanceTurn() {
-        /*
-        int index = context.getCurrentPlayerIndex();
-        if (index >= context.getPlayers().getData().size()) {
-            index = 0;
-        }
-
-        context.setCurrentPlayerIndex(++index);
-
-        if (index == context.getFirstPlayerIndex()) {
-            context.setFirstPlayerIndex(index + 1);
-        }
-        */
         int index = context.getCurrentPlayerIndex();
         int playerCount = context.getPlayers().getData().size();
 

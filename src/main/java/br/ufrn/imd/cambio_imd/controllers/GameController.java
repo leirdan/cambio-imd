@@ -6,6 +6,7 @@ import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
 import br.ufrn.imd.cambio_imd.utility.CardAssetMapper;
+import br.ufrn.imd.cambio_imd.utility.RandomGenerator;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -40,6 +41,7 @@ public class GameController extends ControllerBase {
     @FXML
     private GridPane playerHandGridPane;
 
+
     @FXML
     private Pane pilesPane;
 
@@ -52,6 +54,12 @@ public class GameController extends ControllerBase {
     @FXML
     private TextArea historyTextArea;
 
+    @FXML
+    private Button skipBtn;
+
+    @FXML
+    private Button cambioBtn;
+
     private final Button playBtn = new Button();
     private final Button swapBtn = new Button();
     private VBox optionsBox;
@@ -59,7 +67,46 @@ public class GameController extends ControllerBase {
     @FXML
     protected void initialize() {
         // FIXME: documentar bem essa inicialização
-        // Registrando observadores por classes anônimas
+        initObservers();
+
+        playBtn.setText("Jogar");
+        playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
+        playBtn.setMinWidth(50);
+        swapBtn.setText("Trocar");
+        swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
+        swapBtn.setMinWidth(50);
+        skipBtn.setOnMouseClicked(click -> handleSkipBtnClick());
+        cambioBtn.setOnMouseClicked(click -> handleCambioBtnClick());
+
+        optionsBox = new VBox(5, playBtn, swapBtn);
+        optionsBox.setAlignment(Pos.CENTER);
+        // FIXME: talvez criar uma classe .css pra isso, ou não se só for utilizado aqui
+        optionsBox.setStyle("""
+                 -fx-background-color: rgba(50, 50, 50, 0.9);
+                 -fx-border-color: white;
+                 -fx-border-width: 1px;
+                 -fx-border-radius: 5px;
+                 -fx-background-radius: 5px;
+                 -fx-padding: 10px;
+                 -fx-margin-bottom: 10px;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 1);
+                """);
+
+        // Registra ação de fechar a janela de opções caso clique fora
+        playerHandGridPane.addEventFilter(MouseEvent.MOUSE_CLICKED, click -> {
+            Node source = (Node) click.getTarget();
+            boolean clickedOutsideCard = playerHandGridPane.getChildren().stream()
+                    .noneMatch(child -> child == source);
+
+            if (clickedOutsideCard) {
+                applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_OUT, () -> {
+                    playerHandGridPane.getChildren().remove(optionsBox);
+                });
+            }
+        });
+    }
+
+    protected void initObservers() {
         gameManager.addAnimationObserver(new IGameAnimationObserver() {
             @Override
             public void onCardDrawn() {
@@ -95,47 +142,13 @@ public class GameController extends ControllerBase {
                 uiManager.addMessageOnHistory("Turno de: " + gameManager.getCurrentPlayerName());
                 if (gameManager.isCurrentPlayerHuman()) {
                     enablePlayerControls();
-                }
-                else {
+                } else {
                     disablePlayerControls();
                     handleBotTurn();
                 }
             }
         });
 
-        playBtn.setText("Jogar");
-        playBtn.setOnMouseClicked(click -> handlePlayBtnClick());
-        playBtn.setMinWidth(50);
-        swapBtn.setText("Trocar");
-        swapBtn.setOnMouseClicked(click -> handleSwapBtnClick());
-        swapBtn.setMinWidth(50);
-
-        optionsBox = new VBox(5, playBtn, swapBtn);
-        optionsBox.setAlignment(Pos.CENTER);
-        // FIXME: talvez criar uma classe .css pra isso, ou não se só for utilizado aqui
-        optionsBox.setStyle("""
-                 -fx-background-color: rgba(50, 50, 50, 0.9);
-                 -fx-border-color: white;
-                 -fx-border-width: 1px;
-                 -fx-border-radius: 5px;
-                 -fx-background-radius: 5px;
-                 -fx-padding: 10px;
-                 -fx-margin-bottom: 10px;
-                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 1);
-                """);
-
-        // Registra ação de fechar a janela de opções caso clique fora
-        playerHandGridPane.addEventFilter(MouseEvent.MOUSE_CLICKED, click -> {
-            Node source = (Node) click.getTarget();
-            boolean clickedOutsideCard = playerHandGridPane.getChildren().stream()
-                    .noneMatch(child -> child == source);
-
-            if (clickedOutsideCard) {
-                applyTransition(optionsBox, Duration.millis(300), TransitionType.FADE_OUT, () -> {
-                    playerHandGridPane.getChildren().remove(optionsBox);
-                });
-            }
-        });
     }
 
     private void render() {
@@ -148,14 +161,19 @@ public class GameController extends ControllerBase {
         }
     }
 
+    @FXML
+    private void handleCambioBtnClick() {
+        System.out.println("CAMBIOOOO");
+    }
+
     /**
      *
      */
     private void handleBotTurn() {
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.seconds(1 + new Random().nextInt(3, 6)),
-                event ->{
-                    int percentage = new Random().nextInt(100);
+                Duration.seconds(1 + RandomGenerator.getInt(3, 6)),
+                event -> {
+                    int percentage = RandomGenerator.getInt(100);
                     gameManager.handleBotAction(percentage);
                 }
         ));
@@ -163,20 +181,27 @@ public class GameController extends ControllerBase {
         timeline.play();
     }
 
-    private void enablePlayerControls(){
+    private void enablePlayerControls() {
         playBtn.setDisable(false);
         swapBtn.setDisable(false);
         optionsBox.setDisable(false);
+        cambioBtn.setDisable(false);
+
+        skipBtn.setDisable(gameManager.isCurrentRoundNormal());
     }
 
     private void disablePlayerControls() {
         playBtn.setDisable(true);
         swapBtn.setDisable(true);
         optionsBox.setDisable(true);
-        // pedir câmbio botão false
-        // pular vez botão false
+        cambioBtn.setDisable(true);
+        skipBtn.setDisable(true);
     }
 
+    @FXML
+    private void handleSkipBtnClick() {
+        gameManager.skipTurn();
+    }
 
     private void renderPlayerInfo() {
         // playerTextField.setText(gameManager.getCurrentPlayerName());
@@ -225,7 +250,6 @@ public class GameController extends ControllerBase {
 
     @FXML
     protected void handleCardClick(MouseEvent event) {
-        System.out.println("Clickou!!");
         int cardIndex = uiManager.getClickedCard();
 
         if (playerHandGridPane.getChildren().contains(optionsBox))

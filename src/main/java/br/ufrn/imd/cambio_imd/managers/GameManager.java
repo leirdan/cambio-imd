@@ -154,6 +154,11 @@ public class GameManager {
      * automaticamente a mudança de turno a todos os observadores.
      */
     private void advanceTurn() {
+        if (context.getDrawPileCount() <= 2) {
+            new TransferDiscardCardsToDrawPileCommand().execute();
+            notifyAction("Recarregando cartas... ");
+        }
+
         int index = context.getCurrentPlayerIndex();
         int playerCount = context.getPlayers().getData().size();
 

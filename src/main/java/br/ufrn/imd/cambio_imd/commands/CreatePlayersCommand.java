@@ -1,18 +1,16 @@
 package br.ufrn.imd.cambio_imd.commands;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
+import br.ufrn.imd.cambio_imd.dao.PlayersDAO;
 import br.ufrn.imd.cambio_imd.enums.PlayerType;
 import br.ufrn.imd.cambio_imd.models.players.Player;
-import br.ufrn.imd.cambio_imd.models.players.Players;
-
-import java.util.LinkedHashSet;
 
 public class CreatePlayersCommand implements ICommand {
     @Override
     public void execute() {
-        GameContext context = GameContext.getInstance();
+        GameDAO context = GameDAO.getInstance();
 
-        var players = new Players();
+        var players = new PlayersDAO();
         players.addPlayer(new Player("Jogador", PlayerType.HUMAN));
         players.addPlayer(new Player("Bot 1", PlayerType.ROBOT));
         // FIXME: dando problema de indice, parece que esgota todas as cartas antes de terminar de deistirbuir

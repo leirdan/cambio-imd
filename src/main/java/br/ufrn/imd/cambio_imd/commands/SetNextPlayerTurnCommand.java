@@ -1,14 +1,12 @@
 package br.ufrn.imd.cambio_imd.commands;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
 import br.ufrn.imd.cambio_imd.models.players.Player;
-
-import java.util.Optional;
 
 public class SetNextPlayerTurnCommand implements ICommand {
     @Override
     public void execute() {
-        GameContext context = GameContext.getInstance();
+        GameDAO context = GameDAO.getInstance();
 
         var it = context.getPlayers().getData().iterator();
         Player player = null;

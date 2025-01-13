@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.MenuController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.MenuController">
    <children>
-      <Pane layoutX="387.0" layoutY="272.0" prefHeight="249.0" prefWidth="284.0">
+      <Pane layoutX="370.0" layoutY="360.0" prefHeight="249.0" prefWidth="284.0">
          <children>
             <Pane layoutX="5.0" layoutY="11.0" prefHeight="225.0" prefWidth="274.0">
                <children>
@@ -34,7 +32,7 @@
             </Pane>
          </children>
       </Pane>
-      <ImageView fitHeight="190.0" fitWidth="502.0" layoutX="277.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="190.0" fitWidth="502.0" layoutX="261.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@assets/img/game/main_menu_img.png" />
          </image>

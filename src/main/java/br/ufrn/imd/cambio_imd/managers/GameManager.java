@@ -1,7 +1,7 @@
 package br.ufrn.imd.cambio_imd.managers;
 
 import br.ufrn.imd.cambio_imd.commands.*;
-import br.ufrn.imd.cambio_imd.dao.GameContext;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
 import br.ufrn.imd.cambio_imd.enums.Round;
 import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.Stack;
 
 public class GameManager {
-    private GameContext context = GameContext.getInstance();
+    private GameDAO context = GameDAO.getInstance();
     private static GameManager instance;
 
     // Observers
@@ -26,18 +26,17 @@ public class GameManager {
     private Set<IGameStateObserver> stateObservers = new HashSet<>();
 
     // Singleton pattern
-    private GameManager() {}
+    private GameManager() {
+    }
 
     public static GameManager getInstance() {
         if (instance == null)
             instance = new GameManager();
-
         return instance;
     }
 
-    /* --- Métodos de controle do jogo --- */
+    /* --- Métodos de inicialização do jogo --- */
 
-    // Inicia o jogo, configurando e distribuindo cartas
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
@@ -59,27 +58,41 @@ public class GameManager {
         new SetGameModeCommand(event).execute();
     }
 
-    public boolean isCurrentPlayerHuman() {
-        return context.getCurrentPlayer().isHuman();
+    /* --- Métodos de controle de turnos e rodadas --- */
+
+    public void resetPlayersRestrictions() {
+        context.getPlayers().getData().forEach(player -> {
+            player.setProhibitedCut(false);
+            player.setWrongCut(false);
+        });
     }
-    public boolean isCurrentRoundNormal() {
-        return context.getRoundType() == Round.NORMAL;
+
+    public boolean isCurrentPlayerHuman(){
+        return context.getCurrentPlayer().isHuman();
     }
 
     public void handleBotAction(int percentage) {
-        if (isCurrentPlayerHuman()) {
-            return;
+        if (isCurrentPlayerHuman()) return;
+
+        Player bot = context.getCurrentPlayer();
+        boolean canSkip = false;
+        boolean canCallCambio = false;
+
+        if (bot.getHand().getCards().size() < 5) {
+            canCallCambio = true;
+        }
+        if (!isCurrentRoundNormal()) {
+            canSkip = true;
         }
 
-        // TODO: melhorar essa IA aqui viu
-        if (percentage <= 15) {
+        if (percentage <= 10 && canCallCambio) {
             callCambio();
-        } else if (percentage > 15 && percentage <= 80) {
+        } else if (percentage > 80 && percentage < 100 && canSkip) {
+            skipTurn();
+        } else {
             int limit = getCurrentPlayerCards().size();
             int cardIndex = RandomGenerator.getInt(limit);
             playCard(cardIndex);
-        } else {
-            skipTurn();
         }
     }
 
@@ -88,9 +101,8 @@ public class GameManager {
         advanceTurn();
     }
 
-    // TODO: implementar ação de pediu câmbio!
     public void callCambio() {
-        // lógico de pedir cambio
+//        new AskForCambioCommand().execute();
         notifyAction(getCurrentPlayerName() + " pediu câmbio!");
         advanceTurn();
     }
@@ -137,6 +149,10 @@ public class GameManager {
         }
     }
 
+    public int getDrawPileCardsAmount() {
+        return context.getDrawPileCount();
+    }
+
     /**
      * Avança para o próximo jogador da lista, notificando
      * automaticamente a mudança de turno a todos os observadores.
@@ -145,39 +161,52 @@ public class GameManager {
         int index = context.getCurrentPlayerIndex();
         int playerCount = context.getPlayers().getData().size();
 
-        index = (index + 1) % playerCount;
-        context.setCurrentPlayerIndex(index);
+        // Se o próximo jogador foi o primeiro da sequência, completou a rodada
+        boolean hasCompletedRound = index + 1 == context.getFirstPlayerIndex();
 
-        boolean hasCompletedRound = index == context.getFirstPlayerIndex();
-
+        boolean hasAnyPlayerWithoutCards = context.hasAnyPlayerWithoutCards();
         // O round só deve ser normal quando for a vez do primeiro
         // jogador da rodada, depois está aberto pra cortes.
         if (context.getRoundType() == Round.CUT) {
-            if (hasCompletedRound) {
-                int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
-                context.setFirstPlayerIndex(nextFirstPlayerIndex);
-                context.setRoundType(Round.NORMAL);
-                notifyAction("Rodada normal! ");
+            boolean hasPlayerThatAskedCambio = context.getPlayerThatAskedCambioIndex() != -1;
+
+            if (hasAnyPlayerWithoutCards || (hasPlayerThatAskedCambio && index == context.getPlayerThatAskedCambioIndex())) {
+                // TODO: implementar o ganhador
+                // new SetWinnerCommand().execute();
+            } else {
+                if (hasCompletedRound) {
+                    int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
+                    context.setFirstPlayerIndex(nextFirstPlayerIndex);
+                    context.setRoundType(Round.NORMAL);
+                    notifyAction("Rodada normal! ");
+                    resetPlayersRestrictions();
+                }
             }
         } else if (context.getRoundType() == Round.NORMAL) {
-            context.setRoundType(Round.CUT);
+            if (hasAnyPlayerWithoutCards)
+                // new SetWinnerCommand().execute();
+                context.setRoundType(Round.CUT);
             notifyAction("Rodada de cortes! ");
         }
 
+        index = (index + 1) % playerCount;
+        context.setCurrentPlayerIndex(index);
         notifyChangeTurn();
     }
 
-    // Solicita cambio
-    public void askForCambio(){
-        new AskForCambioCommand(context.getCurrentPlayer().getId()).execute();
+    public void askForCambio() {
+        new AskForCambioCommand().execute();
     }
 
-    // Verifica se alguém ganhou
-    public void verifyWin(){
-        new VerifyWinnerCommand(context.getCurrentPlayer().getId()).execute();
+    public void setWinner() {
+        new SetWinnerCommand(context.getRoundType() == Round.CUT).execute();
     }
 
     /* --- Métodos de consulta de informações --- */
+
+    public boolean isCurrentRoundNormal() {
+        return context.getRoundType() == Round.NORMAL;
+    }
 
     public Stack<Card> getCurrentPlayerCards() {
         Player p = context.getCurrentPlayer();
@@ -192,7 +221,7 @@ public class GameManager {
         return context.getCurrentPlayer().getName();
     }
 
-    public Player getWinner(){
+    public Player getWinner() {
         return context.getWinner();
     }
 
@@ -211,7 +240,6 @@ public class GameManager {
     }
 
     private void notifyStartGame() {
-        System.out.println("Entrou em notify");
         for (var observer : stateObservers) {
             observer.onStart();
         }
@@ -224,24 +252,29 @@ public class GameManager {
     }
 
     private void notifyChangeTurn() {
-        for (var observer : stateObservers) {
-            observer.onChangeTurn();
+        boolean hasWinner = context.getWinner() != null;
+        if (hasWinner) {
+            notifyWinner();
+        } else {
+            for (var observer : stateObservers) {
+                observer.onChangeTurn();
+            }
         }
     }
 
-    private void notifyCambioAsked(){
+    private void notifyCambioAsked() {
         for (var observer : stateObservers) {
             observer.onCambioAsked();
         }
     }
 
-    private void notifyWinner(){
+    private void notifyWinner() {
         for (var observer : stateObservers) {
             observer.onWinner(context.getWinner().getId());
         }
     }
 
-    private void notifySuperCardDetected(){
+    private void notifySuperCardDetected() {
         for (var observer : stateObservers) {
             observer.onSuperCardDetected(context.getHintFromSuperCard(getTopCardOnDiscardPile()));
         }

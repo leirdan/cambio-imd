@@ -57,7 +57,7 @@
                         </ImageView>
                         <Pane prefHeight="219.0" prefWidth="201.0">
                            <children>
-                              <Button fx:id="sixCardsBtn1" layoutX="21.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="48.0" prefWidth="134.0" text="Selecionar">
+                              <Button fx:id="sixCardsBtn" layoutX="21.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleGameModeBtnClick" prefHeight="48.0" prefWidth="134.0" text="Selecionar">
                                  <font>
                                     <Font size="18.0" />
                                  </font>

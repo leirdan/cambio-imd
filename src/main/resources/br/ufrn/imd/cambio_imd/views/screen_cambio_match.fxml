@@ -36,21 +36,31 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.cambio_imd.controllers.GameController">
     <children>
-        <Pane fx:id="pilesPane" layoutX="274.0" layoutY="30.0" prefHeight="288.0" prefWidth="506.0">
+        <Pane fx:id="pilesPane" layoutX="274.0" layoutY="53.0" prefHeight="219.0" prefWidth="506.0">
             <children>
-                <ImageView fx:id="drawPileImage" fitHeight="120.0" fitWidth="79.0" layoutX="359.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                    </image>
-                </ImageView>
+            <Pane layoutX="292.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                      <ImageView fx:id="drawPileImage" fitHeight="120.0" fitWidth="79.0" layoutX="61.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                              <Image url="@assets/img/cards/redBack.png" />
+                          </image>
+                      </ImageView>
+                  <Label fx:id="drawPileCountLabel" layoutX="86.0" layoutY="23.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
             </children>
         </Pane>
-        <Pane layoutX="102.0" layoutY="334.0" prefHeight="213.0" prefWidth="808.0">
+        <Pane layoutX="79.0" layoutY="331.0" prefHeight="214.0" prefWidth="895.0">
             <children>
-                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="211.0" layoutX="7.0" layoutY="1.0" smooth="false" stroke="#aeaeae" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" width="794.0" />
+                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="215.0" layoutX="5.0" layoutY="-1.0" smooth="false" stroke="#aeaeae" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" width="887.0" />
                 <GridPane fx:id="playerHandGridPane" hgap="10.0" layoutX="19.0" layoutY="12.0" prefHeight="188.0" prefWidth="409.0" vgap="12.0">
                     <columnConstraints>
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="65.33332824707031" minWidth="18.333343505859375" prefWidth="58.66667175292969" />
@@ -58,59 +68,22 @@
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="117.33334350585938" minWidth="26.66668701171875" prefWidth="63.0" />
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="137.33331298828125" minWidth="36.666656494140625" prefWidth="60.0" />
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="141.33334350585938" minWidth="44.0" prefWidth="62.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="128.0" minWidth="10.0" prefWidth="46.333343505859375" />
+                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="128.0" minWidth="10.0" prefWidth="46.333343505859375" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints maxHeight="112.0" minHeight="66.66665649414062" prefHeight="90.66665649414062" vgrow="ALWAYS" />
                         <RowConstraints maxHeight="109.33334350585938" minHeight="64.0" prefHeight="85.33334350585938" vgrow="ALWAYS" />
                     </rowConstraints>
-               <children>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@assets/img/cards/redBack.png" />
-                     </image>
-                  </ImageView>
-               </children>
                 </GridPane>
-                <TextArea fx:id="historyTextArea" editable="false" layoutX="581.0" layoutY="10.0" prefHeight="191.0" prefWidth="212.0" />
-            <Button layoutX="458.0" layoutY="123.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pedir câmbio" fx:id="cambioBtn" />
-            <Button layoutX="458.0" layoutY="51.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pular vez" fx:id="skipBtn" />
+                <TextArea fx:id="historyTextArea" editable="false" layoutX="583.0" layoutY="11.0" prefHeight="191.0" prefWidth="300.0" />
+                <Button fx:id="cambioBtn" layoutX="458.0" layoutY="123.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pedir câmbio" />
+                <Button fx:id="skipBtn" layoutX="458.0" layoutY="51.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" text="Pular vez" />
             </children>
         </Pane>
+      <TextField fx:id="playerTextField" editable="false" layoutX="452.0" layoutY="288.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
     </children>
 </AnchorPane>

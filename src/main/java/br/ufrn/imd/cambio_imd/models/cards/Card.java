@@ -2,6 +2,10 @@ package br.ufrn.imd.cambio_imd.models.cards;
 
 import javafx.util.Pair;
 
+/**
+ * Classe que representa uma carta de baralho.
+ * É utilizada em @see Deck e em suas classes filhas.
+ */
 public class Card {
     /**
      * Naipe da carta.
@@ -19,6 +23,10 @@ public class Card {
      *            <p> Os símbolos são
      *            <code> {Ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King }</code>
      *            </p>
+     * @param suit O naipe da carta.
+     *            <p> Os naipes são
+     *           <code> {Heart, Diamond, Club, Spade} </code>
+     *          </p>
      */
     public Card(String suit, String key) {
         this.suit = suit;
@@ -47,21 +55,33 @@ public class Card {
         this.data = new Pair<>(key, value);
     }
 
+    /**
+     * Obtém o naipe da carta.
+     * @return o naipe da carta.
+     */
     public String getSuit() {
         return this.suit;
     }
 
+    /**
+     * Obtém o tipo da carta, independente de numeração.
+     * @return o tipo da carta, independente de numeração.
+     */
     public String getKey() {
         return this.data.getKey();
     }
 
+    /**
+     * Obtém o valor da carta.
+     * @return o valor da carta.
+     */
     public Integer getValue() {
         return this.data.getValue();
     }
 
-
     /**
-     * @return
+     * Retorna se a carta é uma super carta ou, em outras palavras, uma carta de ação.
+     * @return se a carta é uma super carta. True para sim, false para cartas normais.
      */
     public boolean isSuper() {
         var key = data.getKey();
@@ -69,6 +89,11 @@ public class Card {
 
     }
 
+    /**
+     * Compara duas cartas para ver se são iguais.
+     * @param obj Carta a ser comparada.
+     * @return booleano para ver se a carta consegue 
+     */
     @Override
     public boolean equals(Object obj) {
         try {
@@ -85,6 +110,10 @@ public class Card {
         }
     }
 
+    /**
+     * Retorna o tipo da carta em forma de string com o naipe e tipo.
+     * @return a representação da carta em string.
+     */
     @Override
     public String toString() {
         return getKey() + " de " + getSuit();

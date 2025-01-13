@@ -1,8 +1,7 @@
 package br.ufrn.imd.cambio_imd.commands;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
-import br.ufrn.imd.cambio_imd.managers.GameManager;
-import br.ufrn.imd.cambio_imd.managers.GameUIManager;
+import br.ufrn.imd.cambio_imd.dao.GameDAO;
+import br.ufrn.imd.cambio_imd.managers.UIManager;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 
@@ -16,14 +15,14 @@ public class SetGameModeCommand implements ICommand {
     @Override
     public void execute() {
         if (event.getSource() instanceof Button btn) {
-            GameContext gm = GameContext.getInstance();
-            GameUIManager gim = GameUIManager.getInstance();
+            GameDAO gm = GameDAO.getInstance();
+            UIManager gim = UIManager.getInstance();
             switch (btn.getId()) {
                 case "sixCardsBtn":
                     gm.setCardsPerHandLimit(6);
                     gm.setRevealedCardsLimit(1);
-                    gim.setCardWidth(100);
-                    gim.setCardHeight(150);
+                    gim.setCardWidth(70);
+                    gim.setCardHeight(90);
                     break;
 
                 case "twelveCardsBtn":
@@ -37,8 +36,8 @@ public class SetGameModeCommand implements ICommand {
                 default:
                     gm.setCardsPerHandLimit(8);
                     gm.setRevealedCardsLimit(2);
-                    gim.setCardWidth(80);
-                    gim.setCardHeight(120);
+                    gim.setCardWidth(70);
+                    gim.setCardHeight(90);
                     break;
             }
         }

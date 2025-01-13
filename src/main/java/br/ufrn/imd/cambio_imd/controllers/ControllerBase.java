@@ -1,7 +1,7 @@
 package br.ufrn.imd.cambio_imd.controllers;
 
 import br.ufrn.imd.cambio_imd.managers.GameManager;
-import br.ufrn.imd.cambio_imd.managers.GameUIManager;
+import br.ufrn.imd.cambio_imd.managers.UIManager;
 import br.ufrn.imd.cambio_imd.managers.ScreenManager;
 
 /**
@@ -10,7 +10,18 @@ import br.ufrn.imd.cambio_imd.managers.ScreenManager;
  * gerenciadores, para que estes tratem dos dados e modifiquem o estado do jogo.</p>
  */
 public abstract class ControllerBase {
+    /**
+     * Atributo que inicializa a classe de gerenciamento do jogo.
+     */
     protected GameManager gameManager = GameManager.getInstance();
+
+    /**
+     * Atributo que inicializa a classe de gerenciamento de telas.
+     */
     protected ScreenManager screenManager = ScreenManager.getInstance();
-    protected GameUIManager uiManager = GameUIManager.getInstance();
+
+    /**
+     * Atributo que inicializa a classe de gerenciamento de interface.
+     */
+    protected UIManager uiManager = UIManager.getInstance();
 }

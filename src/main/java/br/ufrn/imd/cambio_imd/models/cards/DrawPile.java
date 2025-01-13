@@ -4,7 +4,10 @@ import java.util.Collections;
 import java.util.Optional;
 
 /**
- * Classe que representa a pilha de reposição de cartas
+ * Classe que representa a pilha de reposição de cartas.
+ * Basicamente, é de onde os jogadores compram as cartas de reposição.
+ * Herda de @see Deck.
+ * Armazena objetos do tipo @see Card.
  */
 public class DrawPile extends Deck {
     public DrawPile() {
@@ -19,6 +22,10 @@ public class DrawPile extends Deck {
         Collections.shuffle(this.cards);
     }
 
+    /**
+     * Retira uma carta do topo da pilha de reposição.
+     * @return Carta a ser removida do topo.
+     */
     public Card removeTopCard() {
         if (!this.isEmpty())
             return cards.pop();

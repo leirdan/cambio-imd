@@ -1,13 +1,10 @@
 package br.ufrn.imd.cambio_imd.commands;
 
-import br.ufrn.imd.cambio_imd.dao.GameContext;
-import br.ufrn.imd.cambio_imd.models.players.Player;
-
 public class SuperCardCommand implements ICommand{
     @Override
     public void execute() {
         /*
-        var context = GameContext.getInstance();
+        var context = GameDAO.getInstance();
         var topCard = context.getDiscardPile().getCards().peek();
 
         if(topCard.isSuper()){

@@ -12,6 +12,7 @@ import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -24,8 +25,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-import javax.swing.*;
-import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -138,7 +137,7 @@ public class GameController extends ControllerBase {
             public void onCambioAsked() {
                 uiManager.addMessageOnHistory(gameManager.getCurrentPlayerName() + " pediu um câmbio!");
                 renderHistory();
-                // Disso assumimos que, ao pedir um câmbio, o jogador ainda está dentro de sua rodada e isso não terpa
+                // Disso assumimos que, ao pedir um câmbio, o jogador ainda está dentro de sua rodada e isso não tera
                 // conflitos caso um novo jogador assumisse logo após ele pedir câmbio
             }
 
@@ -219,13 +218,17 @@ public class GameController extends ControllerBase {
     private void renderWinnerAlert() {
         winnerAlert = new Alert(Alert.AlertType.INFORMATION);
         winnerAlert.setTitle("Fim de jogo");
-        if (gameManager.isCurrentPlayerHuman()) {
+        if (gameManager.isWinnerHuman()) {
             winnerAlert.setHeaderText("Parabéns!");
             winnerAlert.setContentText("Você venceu!");
         } else {
             winnerAlert.setHeaderText("Não foi dessa vez!");
-            winnerAlert.setContentText(gameManager.getCurrentPlayerName() + " venceu o jogo!");
+            winnerAlert.setContentText(gameManager.getWinnerName() + " venceu o jogo!");
         }
+        Platform.runLater(() -> {
+            winnerAlert.showAndWait();
+            Platform.exit();
+        });
     }
 
     private void renderPlayerInfo() {
@@ -324,7 +327,6 @@ public class GameController extends ControllerBase {
 
     // Métodos de animação
 
-    // FIXME: deixar este método mais claro
     private void animateCardDiscarded() {
         var cardNode = playerHandGridPane.getChildren().get(uiManager.getClickedCard());
 
@@ -364,19 +366,14 @@ public class GameController extends ControllerBase {
             applyTransition(drawPileImage, Duration.millis(200), TransitionType.FADE_IN);
         });
          */
-        // Cria uma cópia da imagem da pilha de compra
         ImageView drawCardImage = new ImageView(drawPileImage.getImage());
 
-        // Adiciona a cópia ao mesmo container da pilha de compra (para manter a animação no mesmo local)
         ((Pane) drawPileImage.getParent()).getChildren().add(drawCardImage);
 
-        // Animação de retirada da pilha de compra
         applyTransition(drawCardImage, Duration.millis(500), TransitionType.FADE_OUT, () -> {
-            // Adiciona a carta à mão do jogador após a animação
             playerHandGridPane.getChildren().add(drawCardImage);
             renderPlayerHand();
 
-            // Remove a cópia do local original e faz a transição de entrada
             ((Pane) drawPileImage.getParent()).getChildren().remove(drawCardImage);
             applyTransition(drawCardImage, Duration.millis(500), TransitionType.FADE_IN);
         });

@@ -10,7 +10,6 @@ public class GeneratePlayersOrderCommand implements ICommand {
     public void execute() {
         GameDAO context = GameDAO.getInstance();
 
-        // fixme: uma certa gambiarra aqui e desperdício de memória
         List<Player> list = new ArrayList<>();
         for (var player : context.getPlayers().getData()) {
             list.add(player);

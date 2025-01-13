@@ -7,6 +7,7 @@ import br.ufrn.imd.cambio_imd.exceptions.UnitializedGameException;
 import br.ufrn.imd.cambio_imd.models.cards.Card;
 import br.ufrn.imd.cambio_imd.models.cards.DiscardPile;
 import br.ufrn.imd.cambio_imd.models.cards.DrawPile;
+import br.ufrn.imd.cambio_imd.models.players.CardHand;
 import br.ufrn.imd.cambio_imd.models.players.Player;
 import br.ufrn.imd.cambio_imd.observers.IGameAnimationObserver;
 import br.ufrn.imd.cambio_imd.observers.IGameStateObserver;
@@ -67,7 +68,7 @@ public class GameManager {
         });
     }
 
-    public boolean isCurrentPlayerHuman(){
+    public boolean isCurrentPlayerHuman() {
         return context.getCurrentPlayer().isHuman();
     }
 
@@ -102,7 +103,7 @@ public class GameManager {
     }
 
     public void callCambio() {
-//        new AskForCambioCommand().execute();
+        new AskForCambioCommand().execute();
         notifyAction(getCurrentPlayerName() + " pediu câmbio!");
         advanceTurn();
     }
@@ -112,11 +113,6 @@ public class GameManager {
         String cardStr = getCurrentPlayerCards().get(cardIndex).toString();
         DrawPile drawPile = context.getDrawPile();
         DiscardPile discardPile = context.getDiscardPile();
-
-        // FIXME: atualmente, quando o jogador está bloqueado ele não é pulado automaticamente.
-        // Ele precisa jogar a carta para receber a notícia. O legal é que fosse
-        // Pulado automaticamente
-        // pra isso, deve mexer no advanceTurn...
 
         if (context.getRoundType() == Round.CUT && player.isProhibitedCut()) {
             notifyAction(player.getName() + " está proibido de cortar!");
@@ -162,7 +158,7 @@ public class GameManager {
         int playerCount = context.getPlayers().getData().size();
 
         // Se o próximo jogador foi o primeiro da sequência, completou a rodada
-        boolean hasCompletedRound = index + 1 == context.getFirstPlayerIndex();
+        boolean hasCompletedRound = index == context.getFirstPlayerIndex();
 
         boolean hasAnyPlayerWithoutCards = context.hasAnyPlayerWithoutCards();
         // O round só deve ser normal quando for a vez do primeiro
@@ -171,8 +167,7 @@ public class GameManager {
             boolean hasPlayerThatAskedCambio = context.getPlayerThatAskedCambioIndex() != -1;
 
             if (hasAnyPlayerWithoutCards || (hasPlayerThatAskedCambio && index == context.getPlayerThatAskedCambioIndex())) {
-                // TODO: implementar o ganhador
-                // new SetWinnerCommand().execute();
+                new SetWinnerCommand().execute();
             } else {
                 if (hasCompletedRound) {
                     int nextFirstPlayerIndex = (context.getFirstPlayerIndex() + 1) % playerCount;
@@ -183,26 +178,36 @@ public class GameManager {
                 }
             }
         } else if (context.getRoundType() == Round.NORMAL) {
-            if (hasAnyPlayerWithoutCards)
-                // new SetWinnerCommand().execute();
-                context.setRoundType(Round.CUT);
+            if (hasAnyPlayerWithoutCards) {
+                new SetWinnerCommand().execute();
+            }
+            context.setRoundType(Round.CUT);
             notifyAction("Rodada de cortes! ");
         }
 
         index = (index + 1) % playerCount;
         context.setCurrentPlayerIndex(index);
-        notifyChangeTurn();
-    }
 
-    public void askForCambio() {
-        new AskForCambioCommand().execute();
-    }
-
-    public void setWinner() {
-        new SetWinnerCommand(context.getRoundType() == Round.CUT).execute();
+        if (context.getWinner() != null) {
+            notifyWinner();
+        }
+        else {
+            notifyChangeTurn();
+        }
     }
 
     /* --- Métodos de consulta de informações --- */
+
+    public boolean isWinnerHuman() {
+        return context.getWinner() != null && context.getWinner().isHuman();
+    }
+
+    public String getWinnerName() {
+        if (getWinner() != null)
+            return context.getWinner().getName();
+
+        return "undefined";
+    }
 
     public boolean isCurrentRoundNormal() {
         return context.getRoundType() == Round.NORMAL;

@@ -18,18 +18,53 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+/**
+ * Classe responsável por gerenciar o estado do jogo, controlando
+ * a lógica de turnos, rodadas, jogadas e vencedores.
+ * Conexão direta entre as classes de gerenciamento de dados e a interface gráfica.
+ * Utiliza o padrão de projeto Singleton.
+ * @see GameDAO
+ * @see IGameAnimationObserver
+ * @see IGameStateObserver
+ * @see GameManager
+ */
+
 public class GameManager {
+    /**
+     * Singleton pattern
+     * @see GameDAO
+     */
     private GameDAO context = GameDAO.getInstance();
+    /**
+     * Singleton pattern
+     * @see GameManager
+     */
     private static GameManager instance;
 
     // Observers
+
+    /**
+     * Observadores de animações e estado do jogo.
+     */
     private Set<IGameAnimationObserver> animationObservers = new HashSet<>();
+
+    /**
+     * Observadores de estado do jogo.
+     */
     private Set<IGameStateObserver> stateObservers = new HashSet<>();
 
     // Singleton pattern
+    /**
+     * Construtor privado para garantir que a classe seja instanciada apenas uma vez.
+     * @see GameManager
+     */
     private GameManager() {
     }
 
+    /**
+     * Retorna a instância única da classe.
+     * @return Instância única da classe.
+     */
     public static GameManager getInstance() {
         if (instance == null)
             instance = new GameManager();
@@ -38,6 +73,10 @@ public class GameManager {
 
     /* --- Métodos de inicialização do jogo --- */
 
+    /**
+     * Função que inicia o jogo com configurações padrão pré-definidas no menu.
+     * @throws UnitializedGameException Exceção lançada caso o jogo não tenha sido inicializado corretamente.
+     */
     public void start() throws UnitializedGameException {
         if (context.getCardsPerHandLimit() == 0) {
             throw new UnitializedGameException("O jogo não foi inicializado corretamente. " +
@@ -55,12 +94,21 @@ public class GameManager {
         notifyStartGame();
     }
 
+    /**
+     * Função que determina o início de jogo com base no modo de jogo escolhido no menu.
+     * @param event
+     */
+
     public void setupGameMode(ActionEvent event) {
         new SetGameModeCommand(event).execute();
     }
 
     /* --- Métodos de controle de turnos e rodadas --- */
 
+    /**
+     * Função que reseta restriçĩes de corte dos jogadores que ocooreram no corte.
+     * Isso é ativado quando a rodada de cortes termina.
+     */
     private void resetPlayersRestrictions() {
         context.getPlayers().getData().forEach(player -> {
             player.setProhibitedCut(false);
@@ -68,6 +116,10 @@ public class GameManager {
         });
     }
 
+    /**
+     * Funçã.
+     * @return
+     */
     public boolean isCurrentPlayerHuman() {
         return context.getCurrentPlayer().isHuman();
     }

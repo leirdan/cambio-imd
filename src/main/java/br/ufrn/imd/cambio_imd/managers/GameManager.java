@@ -61,7 +61,7 @@ public class GameManager {
 
     /* --- Métodos de controle de turnos e rodadas --- */
 
-    public void resetPlayersRestrictions() {
+    private void resetPlayersRestrictions() {
         context.getPlayers().getData().forEach(player -> {
             player.setProhibitedCut(false);
             player.setWrongCut(false);

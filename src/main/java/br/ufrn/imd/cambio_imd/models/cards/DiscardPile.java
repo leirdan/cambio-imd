@@ -5,7 +5,11 @@ import br.ufrn.imd.cambio_imd.exceptions.EmptyDeckException;
 import java.util.EmptyStackException;
 
 /**
- * Classe que representa a pilha de cartas descartadas
+ * Classe que representa a pilha de cartas descartadas.
+ * É onde os jogadores descartam suas cartas, seja na rodada de corte
+ * ou na rodada normal.
+ * Herda de @see Deck.
+ * Armazena objetos do tipo @see Card.
  */
 public class DiscardPile extends Deck {
     /**
@@ -23,7 +27,11 @@ public class DiscardPile extends Deck {
             return false;
         }
     }
-
+    
+    /**
+     * Retorna a carta que está no topo da pilha central.
+     * @return Carta que está no topo da pilha central.
+     */
     public Card getCardOnTop() {
         return cards.peek();
     }

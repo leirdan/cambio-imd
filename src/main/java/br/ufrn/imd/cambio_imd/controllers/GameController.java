@@ -29,6 +29,8 @@ import java.util.Stack;
 
 /**
  * Controlador que gerencia a principal view do jogo.
+ * Controla a interação do usuário com a interface, incluindo ações de jogadores humanos e robôs,
+ * animações, exibição de informações do jogador, pilhas de cartas e histórico de ações.
  */
 public class GameController extends ControllerBase {
     @FXML
@@ -160,6 +162,10 @@ public class GameController extends ControllerBase {
         });
     }
 
+    /**
+     * Função que renderiza todas as informações da tela, incluindo
+     * pilha de descarte de cartas, informações do jogador e outras.
+     */
     public void render() {
         try {
             renderHistory();
@@ -172,7 +178,10 @@ public class GameController extends ControllerBase {
     }
 
     @FXML
-    private void handleCambioBtnClick() {
+    /**
+     * Captura o clique no botão de pedir câmbio e invoca a ação respectiva.
+     */
+    protected void handleCambioBtnClick() {
         gameManager.callCambio();
     }
 
@@ -181,7 +190,7 @@ public class GameController extends ControllerBase {
     }
 
     /**
-     *
+     * Simula uma jogada de um bot.
      */
     private void handleBotTurn() {
         Timeline timeline = new Timeline(new KeyFrame(
@@ -215,6 +224,9 @@ public class GameController extends ControllerBase {
         gameManager.skipTurn();
     }
 
+    /**
+     * Renderiza o alerta informando quem foi o vencedor da vez.
+     */
     private void renderWinnerAlert() {
         winnerAlert = new Alert(Alert.AlertType.INFORMATION);
         winnerAlert.setTitle("Fim de jogo");
@@ -231,21 +243,18 @@ public class GameController extends ControllerBase {
         });
     }
 
+    /**
+     * Renderiza o nome do jogador e invoca o método de renderizar cartas.
+     */
     private void renderPlayerInfo() {
         playerTextField.setText("Vez de: " + gameManager.getCurrentPlayerName());
         renderPlayerHand();
     }
 
+    /**
+     * Renderiza as cartas da mão do jogador.
+     */
     private void renderPlayerHand() {
-        /**
-         * Variáveis importantes de controle:
-         * MAX_COLUMN: determina o índice máximo das colunas do gridPane, ou seja, são 6 colunas (índice 0 até 5)
-         * correctRow: determina a linha que a carta será renderizada.
-         * Até a 6ª carta ainda renderiza na 1ª linha, a partir daí, somente na 2ª..
-         * correctColumn: determina a coluna que a carta será renderizada.
-         * É calculado pelo índice i, e seu valor vai de 0 a 5.
-         * Quando o índice i chega a 6, correctColumn volta ao valor 0.
-         */
         final int MAX_COLUMN = 5;
         int correctRow = 0, correctColumn = 0;
 
@@ -276,6 +285,9 @@ public class GameController extends ControllerBase {
         }
     }
 
+    /**
+     * Captura o clique na carta e renderiza o box de ações.
+     */
     @FXML
     protected void handleCardClick(MouseEvent event) {
         int cardIndex = uiManager.getClickedCard();
@@ -293,11 +305,17 @@ public class GameController extends ControllerBase {
         playerHandGridPane.add(optionsBox, col, row);
     }
 
+    /**
+     * Captura o clique no botão de jogar e executa a ação de jogar carta.
+     */
     protected void handlePlayBtnClick() {
         gameManager.playCard(uiManager.getClickedCard());
     }
 
     @FXML
+    /**
+     * Captura o clique no botão de visualizar carta e executa a animação para mostrar.
+     */
     protected void handleShowBtnClick() {
         int cardIndex = uiManager.getClickedCard();
 
@@ -318,6 +336,9 @@ public class GameController extends ControllerBase {
         }
     }
 
+    /**
+     * Renderiza as mensagens do histórico de ações
+     */
     protected void renderHistory() {
         historyTextArea.clear();
         for (var message : uiManager.getHistory()) {
@@ -338,6 +359,9 @@ public class GameController extends ControllerBase {
 
     }
 
+    /**
+     * Renderiza a carta do topo da pilha de descarte.
+     */
     private void renderDiscardPile() {
         if (discardPileImage != null)
             pilesPane.getChildren().remove(discardPileImage);
@@ -357,15 +381,6 @@ public class GameController extends ControllerBase {
 
 
     private void animateCardDrawn() {
-        /*
-        var drawCardImage = drawPileImage;
-
-        applyTransition(drawPileImage, Duration.millis(500), TransitionType.FADE_OUT, () -> {
-            playerHandGridPane.getChildren().add(drawCardImage);
-            renderPlayerHand();
-            applyTransition(drawPileImage, Duration.millis(200), TransitionType.FADE_IN);
-        });
-         */
         ImageView drawCardImage = new ImageView(drawPileImage.getImage());
 
         ((Pane) drawPileImage.getParent()).getChildren().add(drawCardImage);
